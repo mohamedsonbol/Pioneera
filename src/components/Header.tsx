@@ -73,13 +73,15 @@ export default function Header({ onCategoryClick }: HeaderProps) {
             >
               {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <h1
-              className={`font-serif font-bold text-brand-600 transition-all duration-300 ${
-                scrolled ? 'text-2xl' : 'text-4xl'
-              }`}
-            >
-              سيدتي
-            </h1>
+            <a href="#" aria-label="Pioneera.net" className="block">
+              <img
+                src="/IMG-20260828-WA0007.jpg"
+                alt="Pioneera.net - مجلة المرأة"
+                className={`w-auto object-contain transition-all duration-300 ${
+                  scrolled ? 'h-10 max-w-[170px]' : 'h-14 max-w-[220px]'
+                }`}
+              />
+            </a>
           </div>
 
           {/* Search */}

@@ -9,7 +9,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <h3 className="font-serif text-3xl font-bold text-brand-400">سيدتي</h3>
+            <img
+              src="/IMG-20260828-WA0007.jpg"
+              alt="Pioneera.net - مجلة المرأة"
+              className="h-16 w-auto max-w-[220px] object-contain"
+            />
             <p className="mt-3 text-sm leading-relaxed text-ink-300">
               مجلة الأسرة العصرية تعنى بدعم الشباب وتمكين المرأة وأسلوب الحياة. مصدرك الأول
               للأزياء والجمال والصحة والعناية بالأسرة.
@@ -62,7 +66,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-3 text-sm text-ink-300">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-brand-400" />
-                <span>info@sayidaty.com</span>
+                <span>info@pioneera.net</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-brand-400" />
@@ -80,7 +84,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-ink-800">
         <div className="mx-auto max-w-7xl px-4 py-4 text-center text-xs text-ink-400">
-          © ٢٠٢٦ مجلة سيدتي. جميع الحقوق محفوظة.
+          © ٢٠٢٦ Pioneera.net. جميع الحقوق محفوظة.
         </div>
       </div>
     </footer>
