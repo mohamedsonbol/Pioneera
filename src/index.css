@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    direction: rtl;
+  }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: #f8f9fa;
+    color: #15171a;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .article-card {
+    @apply cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-xl;
+  }
+  .article-card img {
+    @apply transition-transform duration-500 group-hover:scale-105;
+  }
+  .category-pill {
+    @apply inline-block rounded-full px-3 py-1 text-xs font-bold transition-colors duration-200;
+  }
+  .nav-link {
+    @apply relative text-sm font-medium text-ink-700 transition-colors duration-200 hover:text-brand-600;
+  }
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-[-4px] right-0 h-0.5 w-0 bg-brand-500 transition-all duration-300;
+  }
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #eef0f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #c2c8d0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9aa3ad;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
