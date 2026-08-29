@@ -17,7 +17,7 @@ export default function VideoSection() {
             <div className="h-7 w-1.5 rounded-full bg-brand-500" />
             <div className="flex items-center gap-2">
               <Play className="h-5 w-5 fill-brand-500 text-brand-500" />
-              <h2 className="font-serif text-xl font-bold text-white sm:text-2xl">سيدتي فيديو</h2>
+              <h2 className="font-serif text-xl font-bold text-white sm:text-2xl">Pioneera فيديو</h2>
             </div>
           </div>
           <button className="flex items-center gap-1 text-sm font-medium text-brand-400 transition-colors hover:text-brand-300">

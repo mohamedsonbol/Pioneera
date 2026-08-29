@@ -58,13 +58,13 @@ export default function Hero() {
                 <div className="h-32 w-24 flex-shrink-0 overflow-hidden rounded-lg shadow-md">
                   <img
                     src="https://images.pexels.com/photos/30606975/pexels-photo-30606975.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
-                    alt="غلاف سيدتي"
+                    alt="غلاف Pioneera.net"
                     className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="text-white">
                   <p className="text-xs font-medium text-brand-100">عدد يوليو / أغسطس ٢٠٢٦</p>
-                  <h3 className="mt-1 font-serif text-xl font-bold">مجلة سيدتي</h3>
+                  <h3 className="mt-1 font-serif text-xl font-bold">مجلة Pioneera.net</h3>
                   <p className="mt-1 text-sm text-brand-100">النسخة الرقمية متاحة الآن</p>
                   <button className="mt-3 flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-sm font-bold text-brand-600 transition-colors hover:bg-brand-50">
                     اقرأ العدد
