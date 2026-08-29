@@ -1,12 +1,16 @@
 import { Play, ArrowLeft, Eye } from 'lucide-react';
-import { videoArticles, categories } from '@/data/articles';
+import type { Article } from '@/lib/types';
+import { getCategoryName } from '@/lib/types';
 
-function getCategoryName(id: string) {
-  return categories.find((c) => c.id === id)?.name ?? '';
+interface VideoSectionProps {
+  articles: Article[];
+  onArticleClick: (id: string) => void;
 }
 
-export default function VideoSection() {
-  const [main, ...rest] = videoArticles;
+export default function VideoSection({ articles, onArticleClick }: VideoSectionProps) {
+  if (articles.length === 0) return null;
+
+  const [main, ...rest] = articles;
 
   return (
     <section className="bg-ink-900 py-8">
@@ -17,21 +21,22 @@ export default function VideoSection() {
             <div className="h-7 w-1.5 rounded-full bg-brand-500" />
             <div className="flex items-center gap-2">
               <Play className="h-5 w-5 fill-brand-500 text-brand-500" />
-              <h2 className="font-serif text-xl font-bold text-white sm:text-2xl">Pioneera فيديو</h2>
+              <h2 className="font-serif text-xl font-bold text-white sm:text-2xl">
+                Pioneera فيديو
+              </h2>
             </div>
           </div>
-          <button className="flex items-center gap-1 text-sm font-medium text-brand-400 transition-colors hover:text-brand-300">
-            عرض الكل
-            <ArrowLeft className="h-4 w-4" />
-          </button>
         </div>
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
           {/* Main video */}
-          <div className="group cursor-pointer lg:col-span-2">
+          <div
+            className="group cursor-pointer lg:col-span-2"
+            onClick={() => onArticleClick(main.id)}
+          >
             <div className="relative h-[280px] overflow-hidden rounded-xl sm:h-[400px]">
               <img
-                src={main.image}
+                src={main.image_url ?? ''}
                 alt={main.title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -56,10 +61,14 @@ export default function VideoSection() {
           {/* Side videos */}
           <div className="flex flex-col gap-4">
             {rest.map((video) => (
-              <div key={video.id} className="group cursor-pointer">
+              <div
+                key={video.id}
+                className="group cursor-pointer"
+                onClick={() => onArticleClick(video.id)}
+              >
                 <div className="relative h-32 overflow-hidden rounded-xl">
                   <img
-                    src={video.image}
+                    src={video.image_url ?? ''}
                     alt={video.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -69,10 +78,12 @@ export default function VideoSection() {
                       <Play className="h-4 w-4 fill-white text-white" />
                     </div>
                     <div className="pr-3">
-                      <h4 className="line-clamp-2 text-sm font-bold text-white">{video.title}</h4>
+                      <h4 className="line-clamp-2 text-sm font-bold text-white">
+                        {video.title}
+                      </h4>
                       <span className="mt-1 flex items-center gap-1 text-xs text-ink-300">
                         <Eye className="h-3 w-3" />
-                        {video.date}
+                        {new Date(video.created_at).toLocaleDateString('ar-EG')}
                       </span>
                     </div>
                   </div>

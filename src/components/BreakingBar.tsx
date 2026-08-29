@@ -1,9 +1,13 @@
-import { TrendingUp, ArrowLeft } from 'lucide-react';
-import { trendingArticles, categories } from '@/data/articles';
+import { TrendingUp } from 'lucide-react';
+import type { Article } from '@/lib/types';
+import { getCategoryName } from '@/lib/types';
 
-export default function BreakingBar() {
-  const getCategoryName = (id: string) =>
-    categories.find((c) => c.id === id)?.name ?? '';
+interface BreakingBarProps {
+  articles: Article[];
+}
+
+export default function BreakingBar({ articles }: BreakingBarProps) {
+  if (articles.length === 0) return null;
 
   return (
     <div className="border-b border-ink-100 bg-white">
@@ -14,9 +18,11 @@ export default function BreakingBar() {
         </div>
         <div className="relative flex-1 overflow-hidden">
           <div className="flex animate-marquee gap-8 whitespace-nowrap">
-            {[...trendingArticles, ...trendingArticles].map((article, i) => (
+            {[...articles, ...articles].map((article, i) => (
               <div key={i} className="flex items-center gap-2 text-sm text-ink-600">
-                <span className="font-bold text-brand-500">#{i % trendingArticles.length + 1}</span>
+                <span className="font-bold text-brand-500">
+                  #{(i % articles.length) + 1}
+                </span>
                 <span className="line-clamp-1">{article.title}</span>
                 <span className="text-ink-300">|</span>
                 <span className="text-ink-400">{getCategoryName(article.category)}</span>
@@ -24,7 +30,6 @@ export default function BreakingBar() {
             ))}
           </div>
         </div>
-        <ArrowLeft className="h-4 w-4 flex-shrink-0 text-ink-300" />
       </div>
     </div>
   );
