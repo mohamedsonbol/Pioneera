@@ -1,5 +1,5 @@
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
-import { categories } from '@/data/articles';
+import { categories } from '@/lib/types';
 
 export default function Footer() {
   return (

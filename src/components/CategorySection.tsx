@@ -1,12 +1,13 @@
 import { ArrowLeft } from 'lucide-react';
 import ArticleCard from './ArticleCard';
-import type { Article } from '@/data/articles';
+import type { Article } from '@/lib/types';
 
 interface CategorySectionProps {
   title: string;
   articles: Article[];
   icon?: React.ReactNode;
   accentColor?: string;
+  onArticleClick?: (id: string) => void;
 }
 
 export default function CategorySection({
@@ -14,6 +15,7 @@ export default function CategorySection({
   articles,
   icon,
   accentColor = 'bg-brand-500',
+  onArticleClick,
 }: CategorySectionProps) {
   if (articles.length === 0) return null;
 
@@ -31,19 +33,15 @@ export default function CategorySection({
               <h2 className="font-serif text-xl font-bold text-ink-800 sm:text-2xl">{title}</h2>
             </div>
           </div>
-          <button className="flex items-center gap-1 text-sm font-medium text-brand-600 transition-colors hover:text-brand-700">
-            عرض الكل
-            <ArrowLeft className="h-4 w-4" />
-          </button>
         </div>
 
         {/* Articles grid */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-2">
-            <ArticleCard article={first} />
+            <ArticleCard article={first} onClick={onArticleClick} />
           </div>
           {rest.slice(0, 2).map((article) => (
-            <ArticleCard key={article.id} article={article} />
+            <ArticleCard key={article.id} article={article} onClick={onArticleClick} />
           ))}
         </div>
       </div>

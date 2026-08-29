@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Search, Menu, X, Facebook, Instagram, Twitter, Youtube, Clock } from 'lucide-react';
-import { categories } from '@/data/articles';
+import { Search, Menu, X, Facebook, Instagram, Twitter, Youtube, Clock, Settings } from 'lucide-react';
+import { categories } from '@/lib/types';
+import type { Article } from '@/lib/types';
+import { getCategoryName } from '@/lib/types';
 
 interface HeaderProps {
   onCategoryClick: (id: string) => void;
+  onArticleClick: (id: string) => void;
+  onAdminClick: () => void;
+  articles: Article[];
 }
 
-export default function Header({ onCategoryClick }: HeaderProps) {
+export default function Header({ onCategoryClick, onArticleClick, onAdminClick, articles }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -23,6 +29,13 @@ export default function Header({ onCategoryClick }: HeaderProps) {
     month: 'long',
     day: 'numeric',
   });
+
+  const searchResults = searchQuery.trim()
+    ? articles.filter((a) =>
+        a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (a.excerpt ?? '').toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 5)
+    : [];
 
   return (
     <header className="sticky top-0 z-50">
@@ -64,7 +77,7 @@ export default function Header({ onCategoryClick }: HeaderProps) {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
-          {/* Logo */}
+          {/* Logo + menu */}
           <div className="flex items-center gap-3">
             <button
               className="text-ink-700 transition-colors hover:text-brand-600 lg:hidden"
@@ -73,7 +86,7 @@ export default function Header({ onCategoryClick }: HeaderProps) {
             >
               {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <a href="#" aria-label="Pioneera.net" className="block">
+            <a href="#" aria-label="Pioneera.net" className="block" onClick={(e) => { e.preventDefault(); onCategoryClick('all'); }}>
               <img
                 src="/IMG-20260828-WA0007.jpg"
                 alt="Pioneera.net - مجلة المرأة"
@@ -84,18 +97,54 @@ export default function Header({ onCategoryClick }: HeaderProps) {
             </a>
           </div>
 
-          {/* Search */}
+          {/* Search + admin */}
           <div className="flex items-center gap-3">
-            <div
-              className={`overflow-hidden transition-all duration-300 ${
-                searchOpen ? 'w-48 sm:w-64' : 'w-0'
-              }`}
-            >
-              <input
-                type="text"
-                placeholder="اكتب الكلمات الرئيسية فى البحث"
-                className="w-full rounded-full border border-ink-200 bg-ink-50 px-4 py-2 text-sm outline-none focus:border-brand-400"
-              />
+            <div className="relative">
+              <div
+                className={`overflow-hidden transition-all duration-300 ${
+                  searchOpen ? 'w-48 sm:w-64' : 'w-0'
+                }`}
+              >
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="اكتب الكلمات الرئيسية فى البحث"
+                  className="w-full rounded-full border border-ink-200 bg-ink-50 px-4 py-2 text-sm outline-none focus:border-brand-400"
+                />
+              </div>
+              {/* Search results dropdown */}
+              {searchOpen && searchResults.length > 0 && (
+                <div className="absolute left-0 top-12 z-50 w-80 max-w-[90vw] overflow-hidden rounded-xl bg-white shadow-xl">
+                  {searchResults.map((article) => (
+                    <button
+                      key={article.id}
+                      onClick={() => {
+                        onArticleClick(article.id);
+                        setSearchQuery('');
+                        setSearchOpen(false);
+                      }}
+                      className="flex w-full items-center gap-3 border-b border-ink-50 px-4 py-3 text-right transition-colors hover:bg-ink-50"
+                    >
+                      <div className="h-12 w-16 flex-shrink-0 overflow-hidden rounded">
+                        <img
+                          src={article.image_url ?? ''}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="line-clamp-2 text-sm font-medium text-ink-700">
+                          {article.title}
+                        </p>
+                        <p className="text-xs text-ink-400">
+                          {getCategoryName(article.category)}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <button
               onClick={() => setSearchOpen(!searchOpen)}
@@ -103,6 +152,14 @@ export default function Header({ onCategoryClick }: HeaderProps) {
               aria-label="بحث"
             >
               <Search className="h-5 w-5" />
+            </button>
+            <button
+              onClick={onAdminClick}
+              className="rounded-full bg-ink-50 p-2.5 text-ink-600 transition-colors hover:bg-brand-50 hover:text-brand-600"
+              aria-label="لوحة التحكم"
+              title="لوحة التحكم"
+            >
+              <Settings className="h-5 w-5" />
             </button>
           </div>
         </div>
