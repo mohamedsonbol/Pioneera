@@ -9,7 +9,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.next
+out
 *.local
+next-env.d.ts
+tsconfig.tsbuildinfo
 
 .vscode/*
 !.vscode/extensions.json
@@ -21,3 +25,5 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.local
+.env.*.local

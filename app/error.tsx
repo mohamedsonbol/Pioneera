@@ -1,0 +1,2 @@
+'use client';
+export default function ErrorPage({ reset }: { error: Error & { digest?: string }; reset: () => void }) { return <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-ink-50 text-center"><p className="text-ink-600">تعذر تحميل الصفحة الآن.</p><button onClick={reset} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white">إعادة المحاولة</button></div>; }

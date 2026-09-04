@@ -1,11 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Tajawal', 'sans-serif'],
-        serif: ['Amiri', 'serif'],
+        sans: ['var(--font-tajawal)', 'Tajawal', 'sans-serif'],
+        serif: ['var(--font-amiri)', 'Amiri', 'serif'],
       },
       colors: {
         brand: {
