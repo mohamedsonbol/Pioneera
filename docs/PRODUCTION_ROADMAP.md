@@ -4,6 +4,10 @@
 
 Create a dedicated Sanity Studio and schemas for articles, authors, categories, tags, media, SEO, homepage configuration, redirects, and editorial workflow. Migrate legacy Supabase articles into Sanity, establish stable slugs, publish only through Sanity, and remove editorial writes from Supabase after review. Keep Supabase exclusively for identity and user-generated data.
 
+### Phase 2A status — shadow mode
+
+The repository now contains an embedded `/studio` route, schemas, typed GROQ queries, preview/revalidation endpoints, and a dry-run-only Supabase importer. Supabase remains the live article source. Sanity requires a manually created project/dataset, CORS origins, editor accounts, image-asset mappings, preview/webhook secrets, and an approved migration dry run before any content is imported. A separate approval is required before setting any environment flag that makes the website read Sanity content.
+
 ## Phase 3 — Membership and comments
 
 Create Supabase member profiles and subscription-status records. Keep free verified membership distinct from newsletter marketing consent. Implement server-authorized comment creation only when the member has a confirmed email and active status, the article is published, and its Sanity record is marked as a hot topic. Store authorship by user ID, support reports and moderation states, and expose moderation tools only through protected server endpoints and restrictive RLS.

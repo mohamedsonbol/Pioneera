@@ -4,22 +4,27 @@
   "version": "0.1.0",
   "type": "module",
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22.23.1 <23"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "test": "node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@sanity/client": "7.26.2",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.76.1",
     "lucide-react": "^0.468.0",
     "next": "16.3.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "next-sanity": "13.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "sanity": "6.12.0",
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

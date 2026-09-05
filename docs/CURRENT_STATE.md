@@ -46,3 +46,9 @@ There is no member-profile table, subscription-status model, role model, reports
 ## Secret scan
 
 No tracked `.env` files, private keys, JWTs, common cloud access keys, or obvious API-key patterns were found in the current tree or Git history. Secret values were not printed. Environment variable names for public Supabase configuration were found in source and examples, as expected.
+
+## Node baseline validation record (2026-09-05)
+
+Initial tooling: Node `v24.18.0`, npm `11.16.0`, Next `16.3.3`, React `19.2.8`, and TypeScript `5.9.3`. `npx next info` could not reach the npm registry to check the canary release; npm configuration was recorded with sensitive configuration lines excluded.
+
+Node `v22.23.1` and npm `10.9.8` are now the supported local and production baseline. The exact Node 22 lockfile install and production build completed successfully; see `SECURITY_NOTES.md` for the complete command results and the remaining audit findings.
