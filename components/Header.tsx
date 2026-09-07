@@ -7,7 +7,6 @@ import { Search, Menu, X, Facebook, Instagram, Twitter, Youtube, Clock, UserRoun
 import { categories } from '@/lib/types';
 import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
-import { getArticleSlug } from '@/lib/slug';
 
 interface HeaderProps {
   articles: Article[];
@@ -117,7 +116,7 @@ export default function Header({ articles }: HeaderProps) {
                     <button
                       key={article.id}
                       onClick={() => {
-                        router.push(`/article/${getArticleSlug(article)}`);
+                        router.push(`/article/${article.slug!}`);
                         setSearchQuery('');
                         setSearchOpen(false);
                       }}

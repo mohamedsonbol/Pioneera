@@ -16,7 +16,7 @@ export function slugify(text: string): string {
 /** Build a shareable article slug from title + short id (no DB slug column). */
 export function getArticleSlug(article: Pick<Article, 'id' | 'title'>): string {
   const base = slugify(article.title) || 'article';
-  const shortId = article.id.split('-')[0];
+  const shortId = article.id?.split('-')[0] || 'unknown';
   return `${base}-${shortId}`;
 }
 

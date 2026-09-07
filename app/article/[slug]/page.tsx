@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { articleBySlug, allArticles as fetchAllArticles } from '@/lib/editorial/repository';
-import { getArticleSlug, getSiteUrl } from '@/lib/slug';
+import { getSiteUrl } from '@/lib/slug';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BackToTop from '@/components/BackToTop';
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: 'المقال غير موجود' };
   }
 
-  const canonical = `${getSiteUrl()}/article/${getArticleSlug(article)}`;
+  const canonical = `${getSiteUrl()}/article/${article.slug!}`;
   const description = article.excerpt ?? article.title;
 
   return {

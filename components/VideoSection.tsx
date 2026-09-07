@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Play, Eye } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
-import { getArticleSlug } from '@/lib/slug';
 
 interface VideoSectionProps {
   articles: Article[];
@@ -32,7 +31,7 @@ export default function VideoSection({ articles }: VideoSectionProps) {
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
           <Link
-            href={`/article/${getArticleSlug(main)}`}
+            href={`/article/${main.slug!}`}
             className="group cursor-pointer lg:col-span-2"
           >
             <div className="relative h-[280px] overflow-hidden rounded-xl sm:h-[400px]">
@@ -62,7 +61,7 @@ export default function VideoSection({ articles }: VideoSectionProps) {
             {rest.map((video) => (
               <Link
                 key={video.id}
-                href={`/article/${getArticleSlug(video)}`}
+                href={`/article/${video.slug!}`}
                 className="group cursor-pointer"
               >
                 <div className="relative h-32 overflow-hidden rounded-xl">

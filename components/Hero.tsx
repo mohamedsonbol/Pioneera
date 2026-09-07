@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Clock, ArrowLeft } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { getCategoryColor, getCategoryName } from '@/lib/types';
-import { getArticleSlug } from '@/lib/slug';
 
 interface HeroProps {
   featured: Article | null;
@@ -26,7 +25,7 @@ export default function Hero({ featured, secondary }: HeroProps) {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <Link
-              href={`/article/${getArticleSlug(featured)}`}
+              href={`/article/${featured.slug!}`}
               className="article-card group block h-full cursor-pointer"
             >
               <div className="relative h-[280px] overflow-hidden sm:h-[420px] lg:h-[500px]">
@@ -95,7 +94,7 @@ export default function Hero({ featured, secondary }: HeroProps) {
               {secondary.slice(0, 3).map((article) => (
                 <Link
                   key={article.id}
-                  href={`/article/${getArticleSlug(article)}`}
+                  href={`/article/${article.slug!}`}
                   className="article-card group flex cursor-pointer gap-3 p-2"
                 >
                   <div className="h-20 w-28 flex-shrink-0 overflow-hidden rounded-lg">

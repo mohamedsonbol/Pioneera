@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Clock } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { getCategoryColor, getCategoryName } from '@/lib/types';
-import { getArticleSlug } from '@/lib/slug';
 
 interface ArticleCardProps {
   article: Article;
@@ -14,7 +13,7 @@ interface ArticleCardProps {
 export default function ArticleCard({ article, variant = 'default' }: ArticleCardProps) {
   const date = new Date(article.created_at).toLocaleDateString('ar-EG');
   const image = article.image_url ?? '';
-  const href = `/article/${getArticleSlug(article)}`;
+  const href = `/article/${article.slug!}`;
 
   if (variant === 'horizontal') {
     return (
