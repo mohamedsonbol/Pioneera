@@ -5,7 +5,7 @@
 - `/admin` is a Server Component route and returns a not-found response unless the authenticated user has trusted `app_metadata.role = 'admin'` **and** their email is listed in `ADMIN_EMAILS`.
 - The admin link was removed from the public header. The route is still available to explicitly configured administrators.
 - New browser-side comment submission is disabled. The article UI is read-only and describes the planned member-comment workflow.
-- `supabase/migrations/20260904000000_harden_legacy_access.sql` replaces permissive article, comment moderation, and newsletter administration policies with an `app_metadata`-based admin check. It also drops the anonymous comment insert policy.
+- The canonical active migration baseline creates hardened policies from the outset. The former permissive baseline is retained only under `supabase/archive/` for audit; `20260904000000_harden_legacy_access.sql` remains the idempotent transition for legacy databases.
 - No service-role key is read by application code or included in `.env.example`. Public browser clients use only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Authentication flows use Supabase PKCE callbacks, server-side code exchange, confirmed email status, password-reset links, and a safe relative redirect allowlist.
 
@@ -13,7 +13,9 @@
 
 The hardening migration is a repository artifact only; it has not been run against Supabase. Before exposing this release, apply it through the normal Supabase migration workflow, then assign admin role claims using a trusted environment (Supabase dashboard or server-side Admin API) and set `ADMIN_EMAILS` on the deployment. Until that happens, existing remote RLS policies may remain permissive even though this UI no longer exposes their controls.
 
-## Hardening migration review and local verification
+## Canonical migration review and local verification
+
+Never use `supabase db reset --linked`. Empty local, development, staging, and disaster-recovery databases must replay the active chain with the CLI; existing legacy databases first receive the hardening transition. Older repository checkouts must be retired before the canonical baseline rewrite is deployed. Corrections are forward-only migrations, not destructive baseline rollbacks.
 
 `20260904000000_harden_legacy_access.sql` does not alter or delete rows. It leaves the existing `public_read_articles` policy in place, drops the anonymous comment insert policy, and replaces article mutations, comment moderation, and newsletter administration policies with `public.is_admin()` checks. The helper reads the signed JWT's `app_metadata.role`; application code has no service-role key and the browser cannot set that claim through normal Supabase user-update APIs.
 

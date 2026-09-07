@@ -1,93 +1,91 @@
-# Supabase production-security migration gate
+# Supabase migration history and deployment workflow
 
-This runbook applies only `20260904000000_harden_legacy_access.sql`. Do not run it until the release owner approves the maintenance window and confirms that the live application is using the Phase 1 code.
+## Canonical active chain
 
-## What the migration changes
+The active migration directory is replayable on an empty database. Do not apply it to a remote project without the environment-specific approval and history checks below.
 
-It changes RLS policies and adds `public.is_admin()`. It does not run `DELETE`, `UPDATE`, `TRUNCATE`, `ALTER TABLE`, or any data migration. Published article reading remains available to `anon` and `authenticated`; approved-comment reading remains available. Anonymous comment insertion is removed. Article mutations, comment moderation, and newsletter administration require the signed JWT claim `app_metadata.role = 'admin'`.
+Filename-order behavior is:
 
-`app_metadata` is only assignable through trusted Supabase administrative tooling, not normal browser user-update APIs. The function reads the caller's signed JWT and does not grant a role.
+1. `20260829120434_create_pioneera_schema.sql` creates the three tables with hardened policies.
+2. `20260904000000_harden_legacy_access.sql` is an idempotent transition for legacy schemas.
+3. `20260907000000_secure_development_bootstrap.sql` asserts the schema and policy posture without changing application objects.
 
-## Backup and pre-migration checks
+Use `supabase db push`; it records history and avoids direct-psql drift.
 
-1. Schedule a maintenance window and record the production project ref and current migration list.
-2. Create a database backup in the Supabase dashboard, then export a second recoverable copy:
+## Recommended canonical layout — pending approval
 
-   ```bash
-   pg_dump --format=custom --no-owner --no-privileges "$SUPABASE_DB_URL" > pioneera-pre-rls-hardening.dump
-   ```
+Use one active, CLI-compatible chain in `supabase/migrations/`:
 
-3. Confirm the migration has not already been applied:
+1. `20260829120434_create_pioneera_schema.sql` becomes a **secure baseline**: it creates the original tables, indexes, constraints, trigger, `public.is_admin()`, and hardened RLS in one migration. It must never create permissive authenticated-admin or anonymous-comment policies.
+2. `20260904000000_harden_legacy_access.sql` remains an idempotent transition for databases whose first migration was the legacy schema. It should be safe after the secure baseline, producing the same final policies.
+3. `20260907000000_secure_development_bootstrap.sql` is replaced with a compatible schema/policy assertion or removed from the active chain before any remote has recorded it. It must not create duplicate tables or demand an empty database.
 
-   ```bash
-   supabase migration list --db-url "$SUPABASE_DB_URL"
-   ```
+Keep an immutable copy of the current legacy first migration outside the active CLI directory, for example:
 
-4. Confirm at least one trusted administrator can be assigned `app_metadata.role = admin`, and set `ADMIN_EMAILS` in the website environment before deployment.
-5. Capture the current policies and row counts:
+```text
+supabase/archive/20260829120434_create_pioneera_schema.legacy-permissive.sql
+supabase/archive/20260907000000_secure_development_bootstrap.superseded.sql
+```
 
-   ```sql
-   select tablename, policyname, cmd, roles, qual, with_check
-   from pg_policies
-   where schemaname = 'public' and tablename in ('articles', 'comments', 'newsletter_subscribers')
-   order by tablename, policyname;
+The archive is for audit only; Supabase CLI must not read it as migrations. Git history also retains the original files. Moving or rewriting an active migration is a deployment-sensitive Git change: branches checked out before the change must never be used to initialize a new environment after the canonical chain is adopted. Review and commit the archive move and active-chain rewrite atomically.
 
-   select 'articles' as table_name, count(*) from public.articles
-   union all select 'comments', count(*) from public.comments
-   union all select 'newsletter_subscribers', count(*) from public.newsletter_subscribers;
-   ```
+## Empty development, staging, and disaster-recovery environments
 
-## Exact application command
-
-From this repository, with the production database URL supplied only through the shell environment:
+After the canonical chain is approved and committed, use the normal CLI workflow. Verify the intended project first, then preview and push:
 
 ```bash
-supabase db push --db-url "$SUPABASE_DB_URL"
+supabase migration list --db-url "$PIONEERA_ENVIRONMENT_DB_URL"
+supabase db push --dry-run --db-url "$PIONEERA_ENVIRONMENT_DB_URL"
+supabase db push --db-url "$PIONEERA_ENVIRONMENT_DB_URL"
 ```
 
-Do not paste credentials into a command history, source file, or ticket. The command applies all unapplied repository migrations, so compare `supabase migration list` output with the approved change set first.
+Expected history after a successful empty-environment push:
 
-## Post-migration verification
-
-Run the policy query from the pre-check again. It must show `public_read_articles`, no `public_insert_comments`, and admin policies whose expressions call `public.is_admin()`.
-
-```sql
-select public.is_admin() as current_session_is_admin;
-select count(*) from public.articles where is_published = true;
+```text
+20260829120434
+20260904000000
+20260907000000
 ```
 
-Use separate browser sessions or API requests for each smoke test:
+`db push` creates `supabase_migrations.schema_migrations` when needed and records each applied version. Future pushes compare the active directory with that history and run only later migrations. For disaster recovery, create an empty replacement project, restore required data from backup, then run this same migration-list/dry-run/push sequence against the replacement project's database URL. Do not use `supabase db reset --linked`.
 
-1. Anonymous visitor can list and open published articles.
-2. Anonymous visitor cannot insert a comment; the API returns an RLS authorization failure.
-3. Normal verified member cannot create, update, or delete articles; cannot approve/delete comments; cannot read newsletter subscribers.
-4. Trusted admin with `app_metadata.role = admin` and an `ADMIN_EMAILS` allowlist entry can access `/admin` and perform legacy admin mutations.
-5. A normal user updating `user_metadata` cannot become an admin. Verify their JWT has no `app_metadata.role = admin` claim.
-6. Newsletter opt-in continues to insert a subscriber, and existing row counts are unchanged except for intentional new opt-ins.
+## Existing legacy environments
 
-## Rollback
+Before changing anything, capture the real schema and history:
 
-The migration is reversible at the policy level and does not require data restoration. Only use rollback for an approved incident; it deliberately restores the prior, insecure authorization behavior.
-
-```sql
-drop policy if exists "admin_insert_articles" on public.articles;
-drop policy if exists "admin_update_articles" on public.articles;
-drop policy if exists "admin_delete_articles" on public.articles;
-create policy "admin_insert_articles" on public.articles for insert to authenticated with check (true);
-create policy "admin_update_articles" on public.articles for update to authenticated using (true) with check (true);
-create policy "admin_delete_articles" on public.articles for delete to authenticated using (true);
-
-drop policy if exists "admin_update_comments" on public.comments;
-drop policy if exists "admin_delete_comments" on public.comments;
-create policy "public_insert_comments" on public.comments for insert to anon, authenticated with check (true);
-create policy "admin_update_comments" on public.comments for update to authenticated using (true) with check (true);
-create policy "admin_delete_comments" on public.comments for delete to authenticated using (true);
-
-drop policy if exists "admin_read_newsletter" on public.newsletter_subscribers;
-drop policy if exists "admin_delete_newsletter" on public.newsletter_subscribers;
-create policy "admin_read_newsletter" on public.newsletter_subscribers for select to authenticated using (true);
-create policy "admin_delete_newsletter" on public.newsletter_subscribers for delete to authenticated using (true);
-drop function if exists public.is_admin();
+```bash
+supabase migration list --db-url "$LEGACY_ENVIRONMENT_DB_URL"
 ```
 
-Immediately schedule a corrective hardening deployment after any rollback.
+If version `20260829120434` is recorded and `20260904000000` is absent, the normal transition command after approval is:
+
+```bash
+supabase db push --dry-run --db-url "$LEGACY_ENVIRONMENT_DB_URL"
+supabase db push --db-url "$LEGACY_ENVIRONMENT_DB_URL"
+```
+
+It must show and apply only `20260904000000_harden_legacy_access.sql`; the resulting history is:
+
+```text
+20260829120434
+20260904000000
+20260907000000
+```
+
+The final entry is only appropriate after migration 3 has been converted to a compatible assertion/no-op and is reviewed as safe for that database. If the schema and history differ, stop. Use `supabase db pull` to capture verified drift, or use the supported `supabase migration repair --status applied|reverted <version>` only after proving the exact schema state. Repair changes history only; it never applies or reverts SQL.
+
+## Local replay test
+
+The canonical chain must be tested in a disposable local Supabase/Postgres database before approval. The test environment needs the Supabase CLI and `psql`, neither of which is available in this workspace. Once installed, the test must:
+
+1. Start an isolated local stack.
+2. Replay the active `supabase/migrations/` chain against an empty database.
+3. Assert the three history versions are recorded.
+4. Assert all target tables have RLS, no `public_insert_comments` policy exists, and the expected admin/public policies exist.
+5. Tear down the local stack only; it must never use `--linked` or any remote database URL.
+
+Until the chain is changed, this test is expected to expose the migration-3 guard conflict rather than pass.
+
+## Rollback implications
+
+Do not roll back a baseline by dropping tables in a shared environment. Roll forward with a new corrective migration. The existing legacy hardening rollback is policy-only and intentionally restores insecure authorization, so it requires an approved incident and immediate corrective deployment. A disaster-recovery rebuild uses the canonical replay plus backup restoration, not migration-history edits.
