@@ -12,6 +12,8 @@ export interface Article {
   read_time: string | null;
   created_at: string;
   updated_at: string;
+  is_hot_topic?: boolean;
+  comments_enabled?: boolean;
 }
 
 export interface Comment {

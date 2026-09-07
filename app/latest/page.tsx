@@ -1,6 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
-import { fetchArticles } from '@/lib/queries';
+import { allArticles } from '@/lib/editorial/repository';
 import ArticleListingPage from '@/components/ArticleListingPage';
 
 export const metadata = { title: 'أحدث المقالات' };
-export default async function LatestPage() { const articles = await fetchArticles(await createClient()); return <ArticleListingPage title="أحدث المقالات" articles={articles} allArticles={articles} />; }
+export default async function LatestPage() { const articles = await allArticles(); return <ArticleListingPage title="أحدث المقالات" articles={articles} allArticles={articles} />; }

@@ -1,11 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Clock, Eye, MessageSquare } from 'lucide-react';
-import { fetchComments, incrementView } from '@/lib/queries';
-import { createClient } from '@/lib/supabase/client';
-import type { Article, Comment } from '@/lib/types';
+import type { Article } from '@/lib/types';
 import { getCategoryColor, getCategoryName } from '@/lib/types';
 import { getAuthorSlug } from '@/lib/slug';
 import ArticleCard from '@/components/ArticleCard';
@@ -16,13 +13,6 @@ interface ArticleDetailProps {
 }
 
 export default function ArticleDetail({ article, relatedArticles }: ArticleDetailProps) {
-  const [comments, setComments] = useState<Comment[]>([]);
-
-  useEffect(() => {
-    const supabase = createClient();
-    incrementView(supabase, article.id);
-    fetchComments(supabase, article.id).then(setComments);
-  }, [article.id]);
 
   const formattedDate = new Date(article.created_at).toLocaleDateString('ar-EG', {
     year: 'numeric',
@@ -94,36 +84,13 @@ export default function ArticleDetail({ article, relatedArticles }: ArticleDetai
         <div className="mt-12 border-t border-ink-100 pt-8">
           <h3 className="mb-6 flex items-center gap-2 font-serif text-xl font-bold text-ink-800">
             <MessageSquare className="h-5 w-5 text-brand-500" />
-            التعليقات ({comments.length})
+            النقاش
           </h3>
 
           <div className="mb-8 rounded-xl bg-ink-50 p-4 text-sm leading-relaxed text-ink-600">
-            التعليقات متاحة للقراءة حالياً. ستُفعّل المشاركة بعد اكتمال نظام العضوية والتحقق
-            والمراجعة التحريرية.
+            {!article.is_hot_topic ? 'التعليقات متاحة للموضوعات الساخنة فقط.' : article.comments_enabled ? 'نقاش الأعضاء سيتاح بعد تسجيل الدخول.' : 'النقاش مغلق.'}
           </div>
 
-          <div className="space-y-4">
-            {comments.length === 0 ? (
-              <p className="text-center text-sm text-ink-400">
-                لا توجد تعليقات بعد. كن أول من يعلق!
-              </p>
-            ) : (
-              comments.map((comment) => (
-                <div key={comment.id} className="rounded-xl bg-ink-50 p-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-white">
-                      {comment.name.charAt(0)}
-                    </div>
-                    <span className="font-bold text-ink-800">{comment.name}</span>
-                    <span className="text-xs text-ink-400">
-                      {new Date(comment.created_at).toLocaleDateString('ar-EG')}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-600">{comment.content}</p>
-                </div>
-              ))
-            )}
-          </div>
         </div>
       </div>
 

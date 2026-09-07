@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { fetchArticleBySlug, fetchArticles } from '@/lib/queries';
+import { articleBySlug, allArticles as fetchAllArticles } from '@/lib/editorial/repository';
 import { getArticleSlug, getSiteUrl } from '@/lib/slug';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -14,8 +13,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
-  const article = await fetchArticleBySlug(supabase, slug);
+  const article = await articleBySlug(slug);
 
   if (!article) {
     return { title: 'المقال غير موجود' };
@@ -50,23 +48,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const [article, allArticles] = await Promise.all([
-    fetchArticleBySlug(supabase, slug),
-    fetchArticles(supabase),
+  const [article, editorialArticles] = await Promise.all([
+    articleBySlug(slug), fetchAllArticles(),
   ]);
 
   if (!article) {
     notFound();
   }
 
-  const relatedArticles = allArticles
+  const relatedArticles = editorialArticles
     .filter((a) => a.id !== article.id && a.category === article.category)
     .slice(0, 4);
 
   return (
     <div className="min-h-screen bg-ink-50">
-      <Header articles={allArticles} />
+      <Header articles={editorialArticles} />
       <ArticleDetail article={article} relatedArticles={relatedArticles} />
       <Footer />
       <BackToTop />

@@ -1,13 +1,8 @@
-import { createClient } from '@/lib/supabase/server';
-import { fetchArticles, fetchFeaturedArticle } from '@/lib/queries';
+import { allArticles, featuredArticle } from '@/lib/editorial/repository';
 import HomePage from '@/components/HomePage';
 
 export default async function Page() {
-  const supabase = await createClient();
-  const [articles, featured] = await Promise.all([
-    fetchArticles(supabase),
-    fetchFeaturedArticle(supabase),
-  ]);
+  const [articles, featured] = await Promise.all([allArticles(), featuredArticle()]);
 
   return <HomePage articles={articles} featured={featured} />;
 }

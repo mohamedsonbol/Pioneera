@@ -1,6 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
-import { fetchArticles } from '@/lib/queries';
+import { allArticles, hotTopics } from '@/lib/editorial/repository';
 import ArticleListingPage from '@/components/ArticleListingPage';
 
 export const metadata = { title: 'المواضيع الساخنة' };
-export default async function HotTopicsPage() { const articles = await fetchArticles(await createClient()); const hot = [...articles].sort((a, b) => Number(b.is_featured) - Number(a.is_featured) || b.views - a.views); return <ArticleListingPage title="المواضيع الساخنة" description="أبرز الموضوعات وفق المقالات المميزة والأكثر مشاهدة حالياً." articles={hot} allArticles={articles} />; }
+export default async function HotTopicsPage() { const [articles, hot] = await Promise.all([allArticles(), hotTopics()]); return <ArticleListingPage title="المواضيع الساخنة" description="أبرز الموضوعات وفق المقالات المميزة والأكثر مشاهدة حالياً." articles={hot} allArticles={articles} />; }

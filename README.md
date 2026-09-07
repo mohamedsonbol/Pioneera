@@ -80,3 +80,6 @@ Newsletter signup is a distinct opt-in and does not create a member account. Com
 The Studio is embedded at `/studio` using Sanity 6 and next-sanity. Create a Sanity project and dataset manually, then configure `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_PREVIEW_SECRET`, and `SANITY_REVALIDATE_SECRET`. Add `http://localhost:3000`, `http://127.0.0.1:3000`, and the website production origin to Sanity CORS settings before editor use. The website continues to read articles from Supabase; no live content switch or content import is included in this phase.
 
 `node scripts/migrate-supabase-articles-to-sanity.mjs` is dry-run-only by default. It never writes unless both `--apply` and `MIGRATION_CONFIRM=YES` are supplied; do not use those write flags without explicit approval.
+## Development editorial source
+
+Set `CONTENT_SOURCE=sanity` and use only the Sanity `development` dataset. Sanity is the editorial source; empty datasets render intentional empty states and query failures never fall back to Supabase. Supabase remains responsible for authentication, members, newsletter subscriptions, and future comments. Production `/studio` remains blocked. See `docs/SANITY_DEVELOPMENT_FIXTURES.md` before creating development fixtures.

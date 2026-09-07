@@ -23,3 +23,6 @@ Apply and test the Phase 1 RLS hardening migration, manage admin roles with trus
 ## Phase 6 — testing and deployment
 
 Add unit tests for slugs and authorization predicates, integration tests for RLS and auth flows, route/component tests for RTL rendering, and end-to-end coverage for registration, verification, account, comments, moderation, search, and accessibility. Configure Vercel preview/production environments, required environment variables, Supabase redirect URLs, Sanity webhooks, and deployment checks before launch.
+## Development editorial source
+
+Development pages use `CONTENT_SOURCE=sanity` with the Sanity `development` dataset. There is no automatic Supabase editorial fallback. Supabase remains for auth, members, newsletter, and future comments. Studio remains blocked in production; fixture instructions are in `SANITY_DEVELOPMENT_FIXTURES.md`.

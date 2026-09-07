@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { fetchArticles } from '@/lib/queries';
+import { allArticles as fetchAllArticles, authorArticles } from '@/lib/editorial/repository';
 import { findAuthorNameBySlug } from '@/lib/slug';
 import AuthorPage from '@/components/AuthorPage';
 
@@ -10,10 +9,9 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const supabase = await createClient();
-  const allArticles = await fetchArticles(supabase);
-  const authorName = findAuthorNameBySlug(allArticles, slug);
+  const { slug: authorSlug } = await params;
+  const editorialArticles = await fetchAllArticles();
+  const authorName = findAuthorNameBySlug(editorialArticles, authorSlug);
 
   if (!authorName) return { title: 'الكاتب غير موجود' };
 
@@ -24,16 +22,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function AuthorRoutePage({ params }: PageProps) {
-  const { slug } = await params;
-  const supabase = await createClient();
-  const allArticles = await fetchArticles(supabase);
-  const authorName = findAuthorNameBySlug(allArticles, slug);
+  const { slug: authorSlug } = await params;
+  const editorialArticles = await fetchAllArticles();
+  const authorName = findAuthorNameBySlug(editorialArticles, authorSlug);
 
   if (!authorName) notFound();
 
-  const articles = allArticles.filter((a) => a.author === authorName);
+  const articles = await authorArticles(authorSlug);
 
   return (
-    <AuthorPage authorName={authorName} articles={articles} allArticles={allArticles} />
+    <AuthorPage authorName={authorName} articles={articles} allArticles={editorialArticles} />
   );
 }

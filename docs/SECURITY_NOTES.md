@@ -77,3 +77,6 @@ The previous `next.config.ts` allowed every HTTP and HTTPS remote image host. No
 ## Deferred comment policy
 
 The final comment implementation must use a server-side route or Server Action and database policies to verify: authenticated user, confirmed email, active free subscription status, published article, and Sanity hot-topic designation. Inserts must default to pending moderation. It must not rely on client-side hiding of controls.
+## Sanity development boundary
+
+Use only `CONTENT_SOURCE=sanity` with the development dataset during Phase 2B. Empty results are intentional; failures are controlled server errors, never Supabase editorial fallback. Production Studio remains blocked. The unresolved Sanity/Studio audit findings remain a production-release risk. Development fixture instructions are in `SANITY_DEVELOPMENT_FIXTURES.md`.

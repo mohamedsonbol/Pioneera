@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { fetchArticles, fetchArticlesByCategory } from '@/lib/queries';
+import { allArticles as fetchAllArticles, categoryArticles } from '@/lib/editorial/repository';
 import { getCategoryBySlug, getCategoryName } from '@/lib/types';
 import CategoryPage from '@/components/CategoryPage';
 
@@ -26,17 +25,15 @@ export default async function CategoryRoutePage({ params }: PageProps) {
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
 
-  const supabase = await createClient();
-  const [articles, allArticles] = await Promise.all([
-    fetchArticlesByCategory(supabase, slug),
-    fetchArticles(supabase),
+  const [articles, editorialArticles] = await Promise.all([
+    categoryArticles(slug), fetchAllArticles(),
   ]);
 
   return (
     <CategoryPage
       categoryName={getCategoryName(slug)}
       articles={articles}
-      allArticles={allArticles}
+      allArticles={editorialArticles}
     />
   );
 }
