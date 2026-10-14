@@ -27,6 +27,23 @@ const post = {
   },
 };
 
+// Matches the live WordPress shape for post ID 5: taxonomy terms are nested
+// and hot-topics is a secondary classification category, not the display one.
+const liveHotTopicsPost = {
+  ...post,
+  id: 5,
+  slug: 'simple-morning-habits-balanced-day',
+  sticky: false,
+  categories: [4, 9],
+  _embedded: {
+    ...post._embedded,
+    'wp:term': [[
+      { id: 4, slug: 'health', name: 'Health', taxonomy: 'category' },
+      { id: 9, slug: 'hot-topics', name: 'Hot topics', taxonomy: 'category' },
+    ]],
+  },
+};
+
 function response(data, { status = 200, total = 1, pages = 1 } = {}) {
   return { ok: status >= 200 && status < 300, status, headers: new Headers({ 'X-WP-Total': String(total), 'X-WP-TotalPages': String(pages) }), json: async () => data };
 }
@@ -49,6 +66,32 @@ test('normalization safely handles missing media and embedded references', () =>
   assert.equal(article.author, '');
   assert.equal(article.content_html, '<p>نص المقال</p><p>الثاني</p>');
   assert.equal(article.comments_enabled, false);
+});
+
+test('classifies every assigned embedded category without replacing the primary editorial category', () => {
+  const liveArticle = normalizePost(liveHotTopicsPost);
+  assert.equal(liveArticle.is_hot_topic, true);
+  assert.equal(liveArticle.category, 'health');
+  assert.equal(liveArticle.category_name, 'Health');
+
+  const reversedAssignedIds = normalizePost({ ...liveHotTopicsPost, categories: [9, 4] });
+  assert.equal(reversedAssignedIds.is_hot_topic, true);
+  assert.equal(reversedAssignedIds.category, 'health');
+
+  const reversedEmbeddedTerms = normalizePost({
+    ...liveHotTopicsPost,
+    _embedded: { ...liveHotTopicsPost._embedded, 'wp:term': [[
+      { id: 9, slug: 'hot-topics', name: 'Hot topics', taxonomy: 'category' },
+      { id: 4, slug: 'health', name: 'Health', taxonomy: 'category' },
+    ]] },
+  });
+  assert.equal(reversedEmbeddedTerms.is_hot_topic, true);
+
+  const stickyWithoutTopicCategory = normalizePost({ ...liveHotTopicsPost, sticky: true, _embedded: { ...liveHotTopicsPost._embedded, 'wp:term': [[{ id: 4, slug: 'health', name: 'Health', taxonomy: 'category' }]] } });
+  assert.equal(stickyWithoutTopicCategory.is_hot_topic, true);
+
+  const healthOnly = normalizePost({ ...liveHotTopicsPost, sticky: false, _embedded: { ...liveHotTopicsPost._embedded, 'wp:term': [[{ id: 4, slug: 'health', name: 'Health', taxonomy: 'category' }]] } });
+  assert.equal(healthOnly.is_hot_topic, false);
 });
 
 test('preserves safe WordPress rich HTML while providing a plain-text representation', () => {
@@ -105,6 +148,19 @@ test('listing, search, category, author, and hot-topic queries use WordPress RES
   assert.equal(calls.find((call) => call.searchParams.has('search')).searchParams.get('search'), 'اختبار');
   assert.equal(calls.find((call) => call.searchParams.has('categories')).searchParams.get('categories'), '7');
   assert.equal(calls.find((call) => call.searchParams.has('author')).searchParams.get('author'), '3');
+});
+
+test('hot-topics repository result includes the live-shaped secondary category fixture', async () => {
+  let requestOptions;
+  const repository = createWordPressRepository({
+    env,
+    fetchImpl: async (_url, options) => {
+      requestOptions = options;
+      return response([liveHotTopicsPost]);
+    },
+  });
+  assert.deepEqual((await repository.hotTopics()).map((article) => article.slug), ['simple-morning-habits-balanced-day']);
+  assert.equal(requestOptions.next.revalidate, 60);
 });
 
 test('listing follows WordPress pagination headers', async () => {
