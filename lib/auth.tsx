@@ -3,11 +3,13 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { isSupabaseConfigured } from '@/lib/supabase/config.mjs';
 
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  available: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string) => Promise<{ error: string | null }>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
@@ -19,23 +21,31 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const available = isSupabaseConfigured();
+  const [loading, setLoading] = useState(available);
   const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null);
 
   useEffect(() => {
+    if (!available) {
+      return;
+    }
+
     const client = createClient();
+    if (!client) {
+      return;
+    }
     supabaseRef.current = client;
-    client.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
+    void client.auth.getSession()
+      .then(({ data }) => setSession(data.session))
+      .catch(() => setSession(null))
+      .finally(() => setLoading(false));
 
     const { data: listener } = client.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
     });
 
     return () => listener.subscription.unsubscribe();
-  }, []);
+  }, [available]);
 
   const signIn = async (email: string, password: string) => {
     const supabase = supabaseRef.current;
@@ -82,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         user: session?.user ?? null,
         loading,
+        available,
         signIn,
         signUp,
         resetPassword,

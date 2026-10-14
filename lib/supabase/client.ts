@@ -1,8 +1,12 @@
 import { createBrowserClient } from '@supabase/ssr';
+import { getSupabaseConfig } from './config.mjs';
 
 export function createClient() {
+  const config = getSupabaseConfig();
+  if (!config) return null;
+
   return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    config.url,
+    config.key,
   );
 }

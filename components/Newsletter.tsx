@@ -17,6 +17,11 @@ export default function Newsletter() {
     setLoading(true);
     setError(null);
     const supabase = createClient();
+    if (!supabase) {
+      setLoading(false);
+      setError('الاشتراك في النشرة غير متاح حالياً.');
+      return;
+    }
     const { error: subscribeError } = await subscribeNewsletter(supabase, email.trim());
     setLoading(false);
     if (subscribeError) {

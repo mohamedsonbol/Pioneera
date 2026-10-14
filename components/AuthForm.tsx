@@ -16,7 +16,7 @@ const copy: Record<Mode, { title: string; submit: string }> = {
 
 export default function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
-  const { signIn, signUp, resetPassword, updatePassword } = useAuth();
+  const { signIn, signUp, resetPassword, updatePassword, available } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -49,6 +49,17 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 
   const needsEmail = mode !== 'reset';
   const needsPassword = mode !== 'forgot';
+  if (!available) {
+    return (
+      <main className="mx-auto flex min-h-[70vh] max-w-md items-center px-4 py-12">
+        <section className="w-full rounded-2xl bg-white p-7 shadow-sm">
+          <h1 className="font-serif text-3xl font-bold text-ink-800">العضوية غير متاحة حالياً</h1>
+          <p className="mt-3 text-sm leading-relaxed text-ink-600">خدمات تسجيل الدخول والحسابات غير مفعلة في الوقت الحالي.</p>
+          <Link href="/" className="mt-6 inline-block text-sm font-bold text-brand-700">العودة إلى الرئيسية</Link>
+        </section>
+      </main>
+    );
+  }
   return (
     <main className="mx-auto flex min-h-[70vh] max-w-md items-center px-4 py-12">
       <section className="w-full rounded-2xl bg-white p-7 shadow-sm">

@@ -37,6 +37,12 @@ import {
 
 type Tab = 'overview' | 'articles' | 'comments' | 'subscribers';
 
+function requireSupabase() {
+  const supabase = createClient();
+  if (!supabase) throw new Error('Supabase is not configured.');
+  return supabase;
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
   const { user, signOut } = useAuth();
@@ -51,7 +57,7 @@ export default function AdminDashboard() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
-      const supabase = createClient();
+      const supabase = requireSupabase();
       const [a, c, s] = await Promise.all([
         adminFetchAllArticles(supabase),
         adminFetchComments(supabase),
@@ -82,7 +88,7 @@ export default function AdminDashboard() {
 
   const handleDeleteArticle = async (id: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا المقال؟')) return;
-    const supabase = createClient();
+    const supabase = requireSupabase();
     const { error } = await adminDeleteArticle(supabase, id);
     if (error) {
       alert('فشل الحذف: ' + error);
@@ -92,7 +98,7 @@ export default function AdminDashboard() {
   };
 
   const handleApproveComment = async (id: string) => {
-    const supabase = createClient();
+    const supabase = requireSupabase();
     const { error } = await adminApproveComment(supabase, id);
     if (error) {
       alert('فشل الموافقة: ' + error);
@@ -105,7 +111,7 @@ export default function AdminDashboard() {
 
   const handleDeleteComment = async (id: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا التعليق؟')) return;
-    const supabase = createClient();
+    const supabase = requireSupabase();
     const { error } = await adminDeleteComment(supabase, id);
     if (error) {
       alert('فشل الحذف: ' + error);
@@ -116,7 +122,7 @@ export default function AdminDashboard() {
 
   const handleDeleteSubscriber = async (id: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا المشترك؟')) return;
-    const supabase = createClient();
+    const supabase = requireSupabase();
     const { error } = await adminDeleteSubscriber(supabase, id);
     if (error) {
       alert('فشل الحذف: ' + error);
@@ -126,7 +132,7 @@ export default function AdminDashboard() {
   };
 
   const handleSaveArticle = async (data: Partial<Article>) => {
-    const supabase = createClient();
+    const supabase = requireSupabase();
     if (editingArticle) {
       const { error } = await adminUpdateArticle(supabase, editingArticle.id, data);
       if (error) {
