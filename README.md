@@ -79,4 +79,6 @@ Newsletter signup is a distinct opt-in and does not create a member account. Dis
 
 Public editorial pages use the WordPress REST API. Set `CONTENT_SOURCE=wordpress` and `WORDPRESS_API_URL=https://cms.pioneera.net/wp-json/wp/v2`; WordPress access is server-only, cached with short revalidation, and never falls back to Supabase. The embedded `/studio`, Sanity draft preview, and Sanity webhook routes are disabled during this migration. Supabase remains responsible for authentication and newsletter subscriptions; member discussion is unavailable until WordPress membership/comments are implemented.
 
+For hot topics, use the WordPress category slug `hot-topics` as the canonical CMS convention. Sticky posts remain compatible so existing editorial promotions continue to appear.
+
 Historical Sanity planning and fixture documents remain in `docs/` for the transition record. They are archived and are not runtime configuration.

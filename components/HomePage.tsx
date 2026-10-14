@@ -21,13 +21,14 @@ export default function HomePage({ articles, featured }: HomePageProps) {
     articlesByCategory[cat.id] = articles.filter((a) => a.category === cat.id);
   }
 
-  const trendingArticles = [...articles].sort((a, b) => b.views - a.views).slice(0, 5);
+  // The repository requests WordPress posts by publication date descending.
+  const latestArticles = articles.slice(0, 5);
   const secondaryArticles = articles.filter((a) => !a.is_featured).slice(0, 3);
 
   return (
     <div className="min-h-screen bg-ink-50">
       <Header articles={articles} />
-      <BreakingBar articles={trendingArticles} />
+      <BreakingBar articles={latestArticles} />
 
       <Hero featured={featured} secondary={secondaryArticles} />
 

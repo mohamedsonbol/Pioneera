@@ -4,10 +4,13 @@ import {
   createWordPressRepository,
   EditorialConfigurationError,
   EditorialUnavailableError,
+  calculateReadingTime,
   getWordPressConfig,
   normalizePost,
   sanitizeSearch,
+  sanitizeArticleHtml,
 } from '../lib/editorial/wordpress.mjs';
+import { getArticleImageUrl } from '../lib/editorial/image.mjs';
 
 const category = { id: 7, slug: 'beauty', name: 'جمال', taxonomy: 'category' };
 const author = { id: 3, slug: 'layla-test', name: 'ليلى' };
@@ -33,9 +36,9 @@ const env = { CONTENT_SOURCE: 'wordpress', WORDPRESS_API_URL: 'https://cms.pione
 test('normalizes WordPress post content, references, media, dates, and permanent slugs', () => {
   const article = normalizePost(post);
   assert.deepEqual(article, {
-    id: '42', slug: 'wordpress-article', title: 'عنوان & اختبار', excerpt: 'ملخص آمن', content: 'نص المقال الثاني',
+    id: '42', slug: 'wordpress-article', title: 'عنوان & اختبار', excerpt: 'ملخص آمن', content: 'نص المقال الثاني', content_html: '<p>نص المقال</p><p>الثاني</p>',
     category: 'beauty', category_name: 'جمال', image_url: 'https://cms.pioneera.net/image.jpg', author: 'ليلى', author_slug: 'layla-test',
-    is_featured: true, is_published: true, views: 0, read_time: null, created_at: '2026-10-01T12:00:00Z', updated_at: '2026-10-02T12:00:00Z', is_hot_topic: true, comments_enabled: false,
+    is_featured: true, is_published: true, views: 0, read_time: '1 دقيقة قراءة', created_at: '2026-10-01T12:00:00Z', updated_at: '2026-10-02T12:00:00Z', is_hot_topic: true, comments_enabled: false,
   });
 });
 
@@ -44,7 +47,43 @@ test('normalization safely handles missing media and embedded references', () =>
   assert.equal(article.image_url, null);
   assert.equal(article.category, '');
   assert.equal(article.author, '');
+  assert.equal(article.content_html, '<p>نص المقال</p><p>الثاني</p>');
   assert.equal(article.comments_enabled, false);
+});
+
+test('preserves safe WordPress rich HTML while providing a plain-text representation', () => {
+  const html = '<h2 class="wp-block-heading">عنوان</h2><p>نص <strong>مهم</strong> <a href="https://example.com" target="_blank">رابط</a></p><figure class="wp-block-image"><img src="https://cms.pioneera.net/image.jpg" alt="وصف" loading="lazy"><figcaption>تعليق</figcaption></figure><ul><li>عنصر</li></ul>';
+  const article = normalizePost({ ...post, content: { rendered: html } });
+  assert.match(article.content_html, /<h2 class="wp-block-heading">عنوان<\/h2>/);
+  assert.match(article.content_html, /<a href="https:\/\/example\.com" target="_blank" rel="noopener noreferrer">رابط<\/a>/);
+  assert.match(article.content_html, /<figure class="wp-block-image">/);
+  assert.match(article.content_html, /<img src="https:\/\/cms\.pioneera\.net\/image\.jpg" alt="وصف" loading="lazy" \/>/);
+  assert.equal(article.content, 'عنوان نص مهم رابط تعليق عنصر');
+});
+
+test('removes malicious HTML, event attributes, unsafe URLs, and dangerous elements', () => {
+  const html = '<p onclick="alert(1)">نص</p><script>alert(1)</script><iframe src="https://evil.example"></iframe><a href="javascript:alert(1)" onmouseover="alert(1)">رابط</a><img src="javascript:alert(1)" onerror="alert(1)"><img src="https://cms.pioneera.net/safe.jpg" onerror="alert(1)">';
+  const sanitized = sanitizeArticleHtml(html);
+  assert.equal(sanitized.includes('script'), false);
+  assert.equal(sanitized.includes('iframe'), false);
+  assert.equal(sanitized.includes('alert(1)'), false);
+  assert.equal(sanitized.includes('onclick'), false);
+  assert.equal(sanitized.includes('onerror'), false);
+  assert.equal(sanitized.includes('javascript:'), false);
+  assert.match(sanitized, /<img src="https:\/\/cms\.pioneera\.net\/safe\.jpg" \/>/);
+});
+
+test('calculates deterministic Arabic, English, mixed, and empty reading times', () => {
+  assert.equal(calculateReadingTime('كلمة '.repeat(200)), '1 دقيقة قراءة');
+  assert.equal(calculateReadingTime('word '.repeat(201)), '2 دقيقة قراءة');
+  assert.equal(calculateReadingTime(`${'كلمة '.repeat(100)}${'word '.repeat(101)}`), '2 دقيقة قراءة');
+  assert.equal(calculateReadingTime(''), '1 دقيقة قراءة');
+});
+
+test('uses a null image source to select the accessible editorial placeholder', () => {
+  assert.equal(getArticleImageUrl(null), null);
+  assert.equal(getArticleImageUrl('   '), null);
+  assert.equal(getArticleImageUrl('https://cms.pioneera.net/image.jpg'), 'https://cms.pioneera.net/image.jpg');
 });
 
 test('listing, search, category, author, and hot-topic queries use WordPress REST parameters', async () => {
@@ -77,6 +116,22 @@ test('listing follows WordPress pagination headers', async () => {
   assert.deepEqual(articles.map((article) => article.id), ['1', '2']);
 });
 
+test('WordPress publication ordering remains the source for the latest-articles strip', async () => {
+  const newer = { ...post, id: 43, slug: 'newer', date_gmt: '2026-10-03T12:00:00' };
+  const repository = createWordPressRepository({ env, fetchImpl: async () => response([newer, post]) });
+  assert.deepEqual((await repository.allArticles()).map((article) => article.slug), ['newer', 'wordpress-article']);
+
+  const { readFile } = await import('node:fs/promises');
+  const [home, bar] = await Promise.all([
+    readFile(new URL('../components/HomePage.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../components/BreakingBar.tsx', import.meta.url), 'utf8'),
+  ]);
+  assert.match(home, /articles\.slice\(0, 5\)/);
+  assert.doesNotMatch(home, /\.views/);
+  assert.match(bar, /أحدث المقالات/);
+  assert.doesNotMatch(bar, /الأكثر قراءة/);
+});
+
 test('search is bounded and sanitized', () => {
   const value = sanitizeSearch(` <script>${'أ'.repeat(100)}</script> `);
   assert.ok(value.length <= 80);
@@ -104,4 +159,17 @@ test('public editorial routes use the repository and no longer depend on Sanity 
     assert.match(source, /lib\/editorial\/repository/);
     assert.doesNotMatch(source, /sanity|supabase|fetch\(/i);
   }
+});
+
+test('editorial image consumers use the fallback component and never an empty image source', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const paths = ['../components/ArticleCard.tsx', '../components/Hero.tsx', '../components/VideoSection.tsx', '../components/Header.tsx', '../components/ArticleDetail.tsx'];
+  const sources = await Promise.all(paths.map((path) => readFile(new URL(path, import.meta.url), 'utf8')));
+  for (const source of sources) {
+    assert.match(source, /ArticleImage/);
+    assert.doesNotMatch(source, /src=\{[^}]*\?\?\s*''/);
+  }
+  const image = await readFile(new URL('../components/ArticleImage.tsx', import.meta.url), 'utf8');
+  assert.match(image, /if \(imageUrl\)/);
+  assert.match(image, /article-image-placeholder/);
 });

@@ -8,6 +8,7 @@ import { categories } from '@/lib/types';
 import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
 import { useAuth } from '@/lib/auth';
+import ArticleImage from '@/components/ArticleImage';
 
 interface HeaderProps {
   articles: Article[];
@@ -125,8 +126,8 @@ export default function Header({ articles }: HeaderProps) {
                       className="flex w-full items-center gap-3 border-b border-ink-50 px-4 py-3 text-right transition-colors hover:bg-ink-50"
                     >
                       <div className="h-12 w-16 flex-shrink-0 overflow-hidden rounded">
-                        <img
-                          src={article.image_url ?? ''}
+                        <ArticleImage
+                          src={article.image_url}
                           alt=""
                           className="h-full w-full object-cover"
                         />

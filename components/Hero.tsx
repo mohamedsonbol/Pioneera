@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Clock, ArrowLeft } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { getCategoryColor, getCategoryName } from '@/lib/types';
+import ArticleImage from '@/components/ArticleImage';
 
 interface HeroProps {
   featured: Article | null;
@@ -29,8 +30,8 @@ export default function Hero({ featured, secondary }: HeroProps) {
               className="article-card group block h-full cursor-pointer"
             >
               <div className="relative h-[280px] overflow-hidden sm:h-[420px] lg:h-[500px]">
-                <img
-                  src={featured.image_url ?? ''}
+                <ArticleImage
+                  src={featured.image_url}
                   alt={featured.title}
                   className="h-full w-full object-cover"
                 />
@@ -98,8 +99,8 @@ export default function Hero({ featured, secondary }: HeroProps) {
                   className="article-card group flex cursor-pointer gap-3 p-2"
                 >
                   <div className="h-20 w-28 flex-shrink-0 overflow-hidden rounded-lg">
-                    <img
-                      src={article.image_url ?? ''}
+                    <ArticleImage
+                      src={article.image_url}
                       alt={article.title}
                       className="h-full w-full object-cover"
                     />

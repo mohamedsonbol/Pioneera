@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Clock } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { getCategoryColor, getCategoryName } from '@/lib/types';
+import ArticleImage from '@/components/ArticleImage';
 
 interface ArticleCardProps {
   article: Article;
@@ -12,14 +13,13 @@ interface ArticleCardProps {
 
 export default function ArticleCard({ article, variant = 'default' }: ArticleCardProps) {
   const date = new Date(article.created_at).toLocaleDateString('ar-EG');
-  const image = article.image_url ?? '';
   const href = `/article/${article.slug!}`;
 
   if (variant === 'horizontal') {
     return (
       <Link href={href} className="article-card group flex gap-3 p-2">
         <div className="h-24 w-32 flex-shrink-0 overflow-hidden rounded-lg">
-          <img src={image} alt={article.title} className="h-full w-full object-cover" />
+          <ArticleImage src={article.image_url} alt={article.title} className="h-full w-full object-cover" />
         </div>
         <div className="flex flex-col justify-center">
           <span
@@ -50,7 +50,7 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
   return (
     <Link href={href} className="article-card group flex flex-col">
       <div className="relative h-48 overflow-hidden">
-        <img src={image} alt={article.title} className="h-full w-full object-cover" />
+        <ArticleImage src={article.image_url} alt={article.title} className="h-full w-full object-cover" />
         <span
           className={`category-pill ${getCategoryColor(article.category)} absolute top-3 right-3 text-white shadow-sm`}
         >

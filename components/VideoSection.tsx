@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Play, Eye } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
+import ArticleImage from '@/components/ArticleImage';
 
 interface VideoSectionProps {
   articles: Article[];
@@ -35,8 +36,8 @@ export default function VideoSection({ articles }: VideoSectionProps) {
             className="group cursor-pointer lg:col-span-2"
           >
             <div className="relative h-[280px] overflow-hidden rounded-xl sm:h-[400px]">
-              <img
-                src={main.image_url ?? ''}
+              <ArticleImage
+                src={main.image_url}
                 alt={main.title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -65,8 +66,8 @@ export default function VideoSection({ articles }: VideoSectionProps) {
                 className="group cursor-pointer"
               >
                 <div className="relative h-32 overflow-hidden rounded-xl">
-                  <img
-                    src={video.image_url ?? ''}
+                  <ArticleImage
+                    src={video.image_url}
                     alt={video.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />

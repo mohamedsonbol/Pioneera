@@ -1,11 +1,10 @@
-'use client';
-
 import Link from 'next/link';
-import { ArrowRight, Clock, Eye, MessageSquare } from 'lucide-react';
+import { ArrowRight, Clock, MessageSquare } from 'lucide-react';
 import type { Article } from '@/lib/types';
 import { getCategoryColor, getCategoryName } from '@/lib/types';
 import { getAuthorSlug } from '@/lib/slug';
 import ArticleCard from '@/components/ArticleCard';
+import ArticleImage from '@/components/ArticleImage';
 
 interface ArticleDetailProps {
   article: Article;
@@ -23,8 +22,8 @@ export default function ArticleDetail({ article, relatedArticles }: ArticleDetai
   return (
     <div className="bg-white">
       <div className="relative h-[300px] overflow-hidden sm:h-[450px]">
-        <img
-          src={article.image_url ?? ''}
+        <ArticleImage
+          src={article.image_url}
           alt={article.title}
           className="h-full w-full object-cover"
         />
@@ -61,11 +60,6 @@ export default function ArticleDetail({ article, relatedArticles }: ArticleDetai
                 </span>
               </>
             )}
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <Eye className="h-3.5 w-3.5" />
-              {article.views} مشاهدة
-            </span>
           </div>
         </div>
       </div>
@@ -77,9 +71,12 @@ export default function ArticleDetail({ article, relatedArticles }: ArticleDetai
           </p>
         )}
 
-        <div className="whitespace-pre-wrap text-base leading-loose text-ink-700">
-          {article.content}
-        </div>
+        {article.content_html && (
+          <div
+            className="article-content text-base leading-loose text-ink-700"
+            dangerouslySetInnerHTML={{ __html: article.content_html }}
+          />
+        )}
 
         <div className="mt-12 border-t border-ink-100 pt-8">
           <h3 className="mb-6 flex items-center gap-2 font-serif text-xl font-bold text-ink-800">

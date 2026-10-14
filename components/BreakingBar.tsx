@@ -14,7 +14,7 @@ export default function BreakingBar({ articles }: BreakingBarProps) {
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-2.5">
         <div className="flex flex-shrink-0 items-center gap-2 rounded-full bg-brand-50 px-3 py-1">
           <TrendingUp className="h-4 w-4 text-brand-600" />
-          <span className="text-sm font-bold text-brand-600">الأكثر قراءة</span>
+          <span className="text-sm font-bold text-brand-600">أحدث المقالات</span>
         </div>
         <div className="relative flex-1 overflow-hidden">
           <div className="flex animate-marquee gap-8 whitespace-nowrap">
