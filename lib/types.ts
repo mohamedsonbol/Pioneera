@@ -5,8 +5,10 @@ export interface Article {
   excerpt: string | null;
   content: string | null;
   category: string;
+  category_name?: string;
   image_url: string | null;
   author: string;
+  author_slug?: string;
   is_featured: boolean;
   is_published: boolean;
   views: number;

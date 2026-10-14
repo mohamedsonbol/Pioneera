@@ -45,7 +45,7 @@ export default function ArticleDetail({ article, relatedArticles }: ArticleDetai
           </h1>
           <div className="mt-4 flex items-center gap-4 text-xs text-ink-300 sm:text-sm">
             <Link
-              href={`/author/${getAuthorSlug(article.author)}`}
+              href={`/author/${article.author_slug || getAuthorSlug(article.author)}`}
               className="transition-colors hover:text-white"
             >
               {article.author}
@@ -88,7 +88,7 @@ export default function ArticleDetail({ article, relatedArticles }: ArticleDetai
           </h3>
 
           <div className="mb-8 rounded-xl bg-ink-50 p-4 text-sm leading-relaxed text-ink-600">
-            {!article.is_hot_topic ? 'التعليقات متاحة للموضوعات الساخنة فقط.' : article.comments_enabled ? 'نقاش الأعضاء سيتاح بعد تسجيل الدخول.' : 'النقاش مغلق.'}
+            {'النقاش غير متاح حالياً إلى أن يتم تنفيذ عضوية وتعليقات ووردبريس.'}
           </div>
 
         </div>

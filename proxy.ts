@@ -2,12 +2,6 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function proxy(request: NextRequest) {
-  // Sanity's current runtime advisory set is unresolved. Keep the embedded Studio
-  // unreachable in production until a compatible upstream patch is available.
-  if (process.env.NODE_ENV === 'production' && request.nextUrl.pathname.startsWith('/studio')) {
-    return new NextResponse('Not found', { status: 404 });
-  }
-
   let supabaseResponse = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

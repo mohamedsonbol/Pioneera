@@ -1,19 +1,12 @@
 import type { Metadata } from 'next';
-import { Tajawal, Amiri } from 'next/font/google';
+import '@fontsource/tajawal/400.css';
+import '@fontsource/tajawal/500.css';
+import '@fontsource/tajawal/700.css';
+import '@fontsource/tajawal/900.css';
+import '@fontsource/amiri/400.css';
+import '@fontsource/amiri/700.css';
 import { AuthProvider } from '@/lib/auth';
 import './globals.css';
-
-const tajawal = Tajawal({
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '500', '700', '900'],
-  variable: '--font-tajawal',
-});
-
-const amiri = Amiri({
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '700'],
-  variable: '--font-amiri',
-});
 
 export const metadata: Metadata = {
   title: {
@@ -36,7 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={`${tajawal.variable} ${amiri.variable} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

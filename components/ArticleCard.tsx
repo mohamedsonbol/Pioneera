@@ -25,7 +25,7 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
           <span
             className={`category-pill ${getCategoryColor(article.category)} mb-1.5 self-start text-white`}
           >
-            {getCategoryName(article.category)}
+            {article.category_name || getCategoryName(article.category)}
           </span>
           <h4 className="line-clamp-2 text-sm font-bold leading-snug text-ink-800 group-hover:text-brand-600">
             {article.title}
@@ -54,7 +54,7 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
         <span
           className={`category-pill ${getCategoryColor(article.category)} absolute top-3 right-3 text-white shadow-sm`}
         >
-          {getCategoryName(article.category)}
+          {article.category_name || getCategoryName(article.category)}
         </span>
       </div>
       <div className="flex flex-1 flex-col p-4">

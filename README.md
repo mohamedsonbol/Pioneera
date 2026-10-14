@@ -67,19 +67,16 @@ npm run dev
 
 ## Migration note (Phase 1)
 
-This project was migrated from Vite + React to Next.js App Router. Article slugs are derived from title + short UUID (no DB slug column yet). Sanity CMS integration is planned for Phase 2.
+This project was migrated from Vite + React to Next.js App Router. Public article slugs now come from WordPress.
 
 ## Supabase setup
 
 Configure Supabase Auth email confirmation and add these redirect URLs: `http://localhost:3000/auth/callback`, `http://localhost:3000/reset-password`, plus the corresponding production URLs. Apply migrations through the normal Supabase workflow, including the Phase 1 hardening migration. Assign `app_metadata.role = admin` only with trusted administrative tooling, then include that email in `ADMIN_EMAILS`.
 
-Newsletter signup is a distinct opt-in and does not create a member account. Comments are temporarily read-only pending the verified-member, active-status, Sanity hot-topic, and moderation workflow.
+Newsletter signup is a distinct opt-in and does not create a member account. Discussion is unavailable until WordPress membership and comments are implemented.
 
-## Sanity Studio (Phase 2A shadow mode)
+## WordPress editorial source
 
-The Studio is embedded at `/studio` using Sanity 6 and next-sanity. Create a Sanity project and dataset manually, then configure `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_PREVIEW_SECRET`, and `SANITY_REVALIDATE_SECRET`. Add `http://localhost:3000`, `http://127.0.0.1:3000`, and the website production origin to Sanity CORS settings before editor use. The website continues to read articles from Supabase; no live content switch or content import is included in this phase.
+Public editorial pages use the WordPress REST API. Set `CONTENT_SOURCE=wordpress` and `WORDPRESS_API_URL=https://cms.pioneera.net/wp-json/wp/v2`; WordPress access is server-only, cached with short revalidation, and never falls back to Supabase. The embedded `/studio`, Sanity draft preview, and Sanity webhook routes are disabled during this migration. Supabase remains responsible for authentication and newsletter subscriptions; member discussion is unavailable until WordPress membership/comments are implemented.
 
-`node scripts/migrate-supabase-articles-to-sanity.mjs` is dry-run-only by default. It never writes unless both `--apply` and `MIGRATION_CONFIRM=YES` are supplied; do not use those write flags without explicit approval.
-## Development editorial source
-
-Set `CONTENT_SOURCE=sanity` and use only the Sanity `development` dataset. Sanity is the editorial source; empty datasets render intentional empty states and query failures never fall back to Supabase. Supabase remains responsible for authentication, members, newsletter subscriptions, and future comments. Production `/studio` remains blocked. See `docs/SANITY_DEVELOPMENT_FIXTURES.md` before creating development fixtures.
+Historical Sanity planning and fixture documents remain in `docs/` for the transition record. They are archived and are not runtime configuration.

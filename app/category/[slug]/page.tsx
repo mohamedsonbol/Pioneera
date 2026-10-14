@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { allArticles as fetchAllArticles, categoryArticles } from '@/lib/editorial/repository';
-import { getCategoryBySlug, getCategoryName } from '@/lib/types';
+import { allArticles as fetchAllArticles, categoryArticles, categoryBySlug } from '@/lib/editorial/repository';
 import CategoryPage from '@/components/CategoryPage';
 
 interface PageProps {
@@ -10,10 +9,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await categoryBySlug(slug);
   if (!category) return { title: 'القسم غير موجود' };
 
-  const name = getCategoryName(slug);
+  const name = category.name;
   return {
     title: name,
     description: `اقرأي أحدث مقالات ${name} على Pioneera.net`,
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CategoryRoutePage({ params }: PageProps) {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await categoryBySlug(slug);
   if (!category) notFound();
 
   const [articles, editorialArticles] = await Promise.all([
@@ -31,7 +30,7 @@ export default async function CategoryRoutePage({ params }: PageProps) {
 
   return (
     <CategoryPage
-      categoryName={getCategoryName(slug)}
+      categoryName={category.name}
       articles={articles}
       allArticles={editorialArticles}
     />

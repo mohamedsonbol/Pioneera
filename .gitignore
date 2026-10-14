@@ -9,7 +9,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-.next
+.next/
+.vercel/
+tmp/
 out
 *.local
 next-env.d.ts

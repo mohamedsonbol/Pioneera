@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { allArticles as fetchAllArticles, authorArticles } from '@/lib/editorial/repository';
-import { findAuthorNameBySlug } from '@/lib/slug';
+import { allArticles as fetchAllArticles, authorArticles, authorBySlug } from '@/lib/editorial/repository';
 import AuthorPage from '@/components/AuthorPage';
 
 interface PageProps {
@@ -10,27 +9,25 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug: authorSlug } = await params;
-  const editorialArticles = await fetchAllArticles();
-  const authorName = findAuthorNameBySlug(editorialArticles, authorSlug);
+  const author = await authorBySlug(authorSlug);
 
-  if (!authorName) return { title: 'الكاتب غير موجود' };
+  if (!author) return { title: 'الكاتب غير موجود' };
 
   return {
-    title: authorName,
-    description: `مقالات ${authorName} على Pioneera.net`,
+    title: author.name,
+    description: `مقالات ${author.name} على Pioneera.net`,
   };
 }
 
 export default async function AuthorRoutePage({ params }: PageProps) {
   const { slug: authorSlug } = await params;
-  const editorialArticles = await fetchAllArticles();
-  const authorName = findAuthorNameBySlug(editorialArticles, authorSlug);
+  const [editorialArticles, author] = await Promise.all([fetchAllArticles(), authorBySlug(authorSlug)]);
 
-  if (!authorName) notFound();
+  if (!author) notFound();
 
   const articles = await authorArticles(authorSlug);
 
   return (
-    <AuthorPage authorName={authorName} articles={articles} allArticles={editorialArticles} />
+    <AuthorPage authorName={author.name} articles={articles} allArticles={editorialArticles} />
   );
 }
