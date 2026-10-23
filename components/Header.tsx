@@ -10,6 +10,7 @@ import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
 import { useAuth } from '@/lib/auth';
 import ArticleImage from '@/components/ArticleImage';
+import SonbolLabsAd from '@/components/SonbolLabsAd';
 
 interface HeaderProps {
   articles: Article[];
@@ -90,9 +91,10 @@ export default function Header({ articles }: HeaderProps) {
         </div>
       </div>
 
-      <div className={`bg-white shadow-sm transition-all duration-300 ${scrolled ? 'py-2' : 'py-4'}`}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
-          <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-4">
+      <div className={`bg-white shadow-sm transition-all duration-300 ${scrolled ? 'py-2' : 'py-2.5 sm:py-3'}`}>
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex items-center justify-between gap-3 lg:gap-5">
+            <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-4">
             <button
               type="button"
               className="text-ink-700 transition-colors hover:text-brand-600 lg:hidden"
@@ -106,8 +108,8 @@ export default function Header({ articles }: HeaderProps) {
             <Link
               href="/"
               aria-label="Pioneera - الرئيسية"
-              className={`block shrink-0 transition-[width] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600 ${
-                scrolled ? 'w-[135px] sm:w-[160px] lg:w-[185px]' : 'w-[155px] sm:w-[185px] lg:w-[215px]'
+              className={`relative block aspect-[1030/460] shrink-0 overflow-hidden rounded-sm transition-[width] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600 ${
+                scrolled ? 'w-[125px] sm:w-[145px] lg:w-[165px]' : 'w-[140px] sm:w-[165px] lg:w-[185px]'
               }`}
             >
               <Image
@@ -115,13 +117,17 @@ export default function Header({ articles }: HeaderProps) {
                 alt="Pioneera logo"
                 width={1536}
                 height={1024}
-                sizes="(max-width: 640px) 155px, (max-width: 1024px) 185px, 215px"
-                className="h-auto w-full"
+                sizes="(max-width: 640px) 140px, (max-width: 1024px) 165px, 185px"
+                className="pointer-events-none absolute -left-[22.82%] -top-[61.96%] h-auto w-[149.13%] max-w-none mix-blend-multiply"
               />
             </Link>
-          </div>
+            </div>
 
-          <div className="flex items-center gap-3">
+            <div className="hidden min-w-0 flex-1 lg:block lg:max-w-[570px]">
+              <SonbolLabsAd />
+            </div>
+
+            <div className="flex shrink-0 items-center gap-3">
             <div className="relative">
               <div
                 className={`overflow-hidden transition-all duration-300 ${
@@ -193,6 +199,10 @@ export default function Header({ articles }: HeaderProps) {
                 <UserRound className="h-5 w-5" />
               </Link>
             )}
+            </div>
+          </div>
+          <div className="mt-2 lg:hidden">
+            <SonbolLabsAd compact />
           </div>
         </div>
       </div>
