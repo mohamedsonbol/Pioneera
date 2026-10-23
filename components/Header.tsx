@@ -79,7 +79,7 @@ export default function Header({ articles }: HeaderProps) {
 
       <div className={`bg-white shadow-sm transition-all duration-300 ${scrolled ? 'py-2' : 'py-4'}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-4">
             <button
               className="text-ink-700 transition-colors hover:text-brand-600 lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -87,13 +87,20 @@ export default function Header({ articles }: HeaderProps) {
             >
               {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <Link href="/" aria-label="Pioneera.net" className="block">
+            <Link
+              href="/"
+              aria-label="Pioneera.net - الرئيسية"
+              className={`relative block aspect-[1030/460] shrink-0 overflow-hidden rounded-sm transition-[width] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600 ${
+                scrolled ? 'w-[150px] sm:w-[180px] lg:w-[210px]' : 'w-[180px] sm:w-[220px] lg:w-[260px]'
+              }`}
+            >
+              {/* Frame the artwork inside the original JPG's generous white margins. */}
               <img
                 src="/IMG-20260828-WA0007.jpg"
                 alt="Pioneera.net - مجلة المرأة"
-                className={`w-auto object-contain transition-all duration-300 ${
-                  scrolled ? 'h-10 max-w-[170px]' : 'h-14 max-w-[220px]'
-                }`}
+                width={1536}
+                height={1024}
+                className="pointer-events-none absolute -left-[22.82%] -top-[61.96%] h-auto w-[149.13%] max-w-none mix-blend-multiply"
               />
             </Link>
           </div>
