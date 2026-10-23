@@ -160,7 +160,8 @@ test('hot-topics repository result includes the live-shaped secondary category f
     },
   });
   assert.deepEqual((await repository.hotTopics()).map((article) => article.slug), ['simple-morning-habits-balanced-day']);
-  assert.equal(requestOptions.next.revalidate, 60);
+  assert.equal(requestOptions.cache, 'no-store');
+  assert.equal(requestOptions.next, undefined);
 });
 
 test('listing follows WordPress pagination headers', async () => {
@@ -228,4 +229,15 @@ test('editorial image consumers use the fallback component and never an empty im
   const image = await readFile(new URL('../components/ArticleImage.tsx', import.meta.url), 'utf8');
   assert.match(image, /if \(imageUrl\)/);
   assert.match(image, /article-image-placeholder/);
+});
+
+ test('successive page requests see newly published CMS content without a cache window', async () => {
+  let published = [post];
+  const repository = createWordPressRepository({ env, fetchImpl: async (_url, options) => {
+    assert.equal(options.cache, 'no-store');
+    return response(published);
+  } });
+  assert.equal((await repository.allArticles()).length, 1);
+  published = [{ ...post, id: 43, slug: 'newly-published' }, post];
+  assert.equal((await repository.allArticles())[0].slug, 'newly-published');
 });
