@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const name = category.name;
   return {
     title: name,
-    description: `اقرأي أحدث مقالات ${name} على Pioneera.net`,
+    description: `اقرأي أحدث مقالات ${name} على Pioneera`,
   };
 }
 

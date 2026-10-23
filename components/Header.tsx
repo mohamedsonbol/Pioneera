@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Menu, X, Facebook, Instagram, Twitter, Youtube, Clock, UserRound } from 'lucide-react';
+import { Search, Menu, X, Clock, UserRound, Phone, MessageCircle } from 'lucide-react';
 import { categories } from '@/lib/types';
 import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
@@ -57,22 +58,34 @@ export default function Header({ articles }: HeaderProps) {
             <Clock className="h-3.5 w-3.5 text-brand-400" />
             <span className="text-ink-200">{today}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="hidden text-ink-300 sm:inline">تابعنا على</span>
-            <div className="flex items-center gap-3">
-              <a href="#" className="text-ink-300 transition-colors hover:text-brand-400">
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a href="#" className="text-ink-300 transition-colors hover:text-brand-400">
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a href="#" className="text-ink-300 transition-colors hover:text-brand-400">
-                <Twitter className="h-4 w-4" />
-              </a>
-              <a href="#" className="text-ink-300 transition-colors hover:text-brand-400">
-                <Youtube className="h-4 w-4" />
-              </a>
-            </div>
+          <div className="hidden items-center gap-3 lg:flex">
+            <a
+              href="tel:+971556889166"
+              dir="ltr"
+              className="flex items-center gap-1.5 text-ink-300 transition-colors hover:text-brand-400"
+              aria-label="اتصل بنا على +971 55 688 9166"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              <span>+971 55 688 9166</span>
+            </a>
+            <a
+              href="https://wa.me/971556889166"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 text-ink-300 transition-colors hover:text-brand-400"
+            >
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span>واتساب</span>
+            </a>
+            <a
+              href="tel:00201032907200"
+              dir="ltr"
+              className="flex items-center gap-1.5 text-ink-300 transition-colors hover:text-brand-400"
+              aria-label="اتصل بنا على 00201032907200"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              <span>00201032907200</span>
+            </a>
           </div>
         </div>
       </div>
@@ -81,26 +94,29 @@ export default function Header({ articles }: HeaderProps) {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
           <div className="flex min-w-0 shrink-0 items-center gap-3 sm:gap-4">
             <button
+              type="button"
               className="text-ink-700 transition-colors hover:text-brand-600 lg:hidden"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="القائمة"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-navigation"
             >
               {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
             <Link
               href="/"
-              aria-label="Pioneera.net - الرئيسية"
-              className={`relative block aspect-[1030/460] shrink-0 overflow-hidden rounded-sm transition-[width] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600 ${
-                scrolled ? 'w-[150px] sm:w-[180px] lg:w-[210px]' : 'w-[180px] sm:w-[220px] lg:w-[260px]'
+              aria-label="Pioneera - الرئيسية"
+              className={`block shrink-0 transition-[width] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600 ${
+                scrolled ? 'w-[135px] sm:w-[160px] lg:w-[185px]' : 'w-[155px] sm:w-[185px] lg:w-[215px]'
               }`}
             >
-              {/* Frame the artwork inside the original JPG's generous white margins. */}
-              <img
+              <Image
                 src="/IMG-20260828-WA0007.jpg"
-                alt="Pioneera.net - مجلة المرأة"
+                alt="Pioneera logo"
                 width={1536}
                 height={1024}
-                className="pointer-events-none absolute -left-[22.82%] -top-[61.96%] h-auto w-[149.13%] max-w-none mix-blend-multiply"
+                sizes="(max-width: 640px) 155px, (max-width: 1024px) 185px, 215px"
+                className="h-auto w-full"
               />
             </Link>
           </div>
@@ -153,6 +169,7 @@ export default function Header({ articles }: HeaderProps) {
               )}
             </div>
             <button
+              type="button"
               onClick={() => {
                 if (searchOpen && searchQuery.trim()) {
                   router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
@@ -201,7 +218,7 @@ export default function Header({ articles }: HeaderProps) {
 
       {menuOpen && (
         <div className="border-b border-ink-100 bg-white lg:hidden">
-          <ul className="flex flex-col gap-1 px-4 py-3">
+          <ul id="mobile-navigation" className="flex flex-col gap-1 px-4 py-3">
             <li>
               <Link
                 href="/"
@@ -222,6 +239,37 @@ export default function Header({ articles }: HeaderProps) {
                 </Link>
               </li>
             ))}
+            <li className="mt-2 border-t border-ink-100 pt-2">
+              <a
+                href="tel:+971556889166"
+                dir="ltr"
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-right text-ink-700 hover:bg-ink-50"
+              >
+                <Phone className="h-4 w-4 text-brand-600" />
+                <span>+971 55 688 9166</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="tel:00201032907200"
+                dir="ltr"
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-right text-ink-700 hover:bg-ink-50"
+              >
+                <Phone className="h-4 w-4 text-brand-600" />
+                <span>00201032907200</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://wa.me/971556889166"
+                target="_blank"
+                rel="noreferrer"
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-ink-700 hover:bg-ink-50"
+              >
+                <MessageCircle className="h-4 w-4 text-brand-600" />
+                <span>واتساب</span>
+              </a>
+            </li>
           </ul>
         </div>
       )}

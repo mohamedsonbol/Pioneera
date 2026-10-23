@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: author.name,
-    description: `مقالات ${author.name} على Pioneera.net`,
+    description: `مقالات ${author.name} على Pioneera`,
   };
 }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
@@ -176,10 +177,12 @@ export default function AdminDashboard() {
       <header className="sticky top-0 z-40 border-b border-ink-200 bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src="/IMG-20260828-WA0007.jpg"
-              alt="Pioneera.net"
-              className="h-10 w-auto object-contain"
+              alt="Pioneera logo"
+              width={1536}
+              height={1024}
+              className="h-auto w-24"
             />
             <span className="hidden text-sm font-medium text-ink-500 sm:inline">
               لوحة التحكم

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import { Lock, Mail, ArrowLeft } from 'lucide-react';
@@ -40,10 +41,12 @@ export default function AdminLogin() {
 
         <div className="rounded-2xl bg-white p-8 shadow-2xl">
           <div className="mb-6 text-center">
-            <img
+            <Image
               src="/IMG-20260828-WA0007.jpg"
-              alt="Pioneera.net"
-              className="mx-auto h-16 w-auto object-contain"
+              alt="Pioneera logo"
+              width={1536}
+              height={1024}
+              className="mx-auto h-auto w-44"
             />
             <h1 className="mt-4 font-serif text-2xl font-bold text-ink-800">
               {mode === 'login' ? 'تسجيل دخول المشرف' : 'إنشاء حساب المشرف'}
@@ -68,7 +71,6 @@ export default function AdminLogin() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full rounded-lg border border-ink-200 bg-ink-50 py-3 pr-10 pl-4 text-sm outline-none focus:border-brand-400 focus:bg-white"
-                  placeholder="admin@pioneera.net"
                   dir="ltr"
                 />
               </div>

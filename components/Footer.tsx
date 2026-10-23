@@ -1,36 +1,29 @@
+import Image from 'next/image';
 import Link from 'next/link';
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { MapPin, MessageCircle, Phone } from 'lucide-react';
 import { categories } from '@/lib/types';
 
 export default function Footer() {
   return (
     <footer className="bg-ink-900 text-white">
       <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div>
-            <img
-              src="/IMG-20260828-WA0007.jpg"
-              alt="Pioneera.net - مجلة المرأة"
-              className="h-16 w-auto max-w-[220px] object-contain"
-            />
+            <Link href="/" className="inline-block rounded-md bg-white px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-400">
+              <Image
+                src="/IMG-20260828-WA0007.jpg"
+                alt="Pioneera logo"
+                width={1536}
+                height={1024}
+                sizes="224px"
+                className="h-auto w-56"
+              />
+            </Link>
             <p className="mt-3 text-sm leading-relaxed text-ink-300">
               مجلة الأسرة العصرية تعنى بدعم الشباب وتمكين المرأة وأسلوب الحياة. مصدرك الأول
               للأزياء والجمال والصحة والعناية بالأسرة.
             </p>
-            <div className="mt-4 flex items-center gap-3">
-              <a href="#" className="rounded-full bg-ink-800 p-2 text-ink-300 transition-colors hover:bg-brand-600 hover:text-white">
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a href="#" className="rounded-full bg-ink-800 p-2 text-ink-300 transition-colors hover:bg-brand-600 hover:text-white">
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a href="#" className="rounded-full bg-ink-800 p-2 text-ink-300 transition-colors hover:bg-brand-600 hover:text-white">
-                <Twitter className="h-4 w-4" />
-              </a>
-              <a href="#" className="rounded-full bg-ink-800 p-2 text-ink-300 transition-colors hover:bg-brand-600 hover:text-white">
-                <Youtube className="h-4 w-4" />
-              </a>
-            </div>
+            <p className="mt-4 text-xs font-medium text-ink-300">Part of Visions Group</p>
           </div>
 
           <div>
@@ -47,30 +40,29 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 font-bold text-white">روابط سريعة</h4>
-            <ul className="flex flex-col gap-2 text-sm text-ink-300">
-              <li><a href="#" className="transition-colors hover:text-brand-400">من نحن</a></li>
-              <li><a href="#" className="transition-colors hover:text-brand-400">سياسة الخصوصية</a></li>
-              <li><a href="#" className="transition-colors hover:text-brand-400">شروط الاستخدام</a></li>
-              <li><a href="#" className="transition-colors hover:text-brand-400">الإعلان معنا</a></li>
-              <li><a href="#" className="transition-colors hover:text-brand-400">اتصل بنا</a></li>
-            </ul>
-          </div>
-
-          <div>
             <h4 className="mb-4 font-bold text-white">تواصل معنا</h4>
             <ul className="flex flex-col gap-3 text-sm text-ink-300">
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-brand-400" />
-                <span>info@pioneera.net</span>
+                <MapPin className="h-4 w-4 shrink-0 text-brand-400" aria-hidden="true" />
+                <span>مصر (Egypt)</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-brand-400" />
-                <span dir="ltr">+966 12 345 6789</span>
+              <li>
+                <a href="tel:+971556889166" dir="ltr" className="flex w-fit items-center gap-2 transition-colors hover:text-brand-400">
+                  <Phone className="h-4 w-4 shrink-0 text-brand-400" aria-hidden="true" />
+                  <span>+971 55 688 9166</span>
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-brand-400" />
-                <span>الرياض، المملكة العربية السعودية</span>
+              <li>
+                <a href="tel:00201032907200" dir="ltr" className="flex w-fit items-center gap-2 transition-colors hover:text-brand-400">
+                  <Phone className="h-4 w-4 shrink-0 text-brand-400" aria-hidden="true" />
+                  <span>00201032907200</span>
+                </a>
+              </li>
+              <li>
+                <a href="https://wa.me/971556889166" target="_blank" rel="noreferrer" className="flex w-fit items-center gap-2 transition-colors hover:text-brand-400">
+                  <MessageCircle className="h-4 w-4 shrink-0 text-brand-400" aria-hidden="true" />
+                  <span>واتساب</span>
+                </a>
               </li>
             </ul>
           </div>
@@ -79,7 +71,7 @@ export default function Footer() {
 
       <div className="border-t border-ink-800">
         <div className="mx-auto max-w-7xl px-4 py-4 text-center text-xs text-ink-400">
-          © ٢٠٢٦ Pioneera.net. جميع الحقوق محفوظة.
+          © ٢٠٢٦ Pioneera. جميع الحقوق محفوظة.
         </div>
       </div>
     </footer>
