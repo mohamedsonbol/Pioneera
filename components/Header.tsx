@@ -4,13 +4,15 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Menu, X, Clock, UserRound, Phone, MessageCircle } from 'lucide-react';
+import { Search, Menu, X, Clock, UserRound, Phone, MessageCircle, Instagram } from 'lucide-react';
 import { categories } from '@/lib/types';
 import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
 import { useAuth } from '@/lib/auth';
 import ArticleImage from '@/components/ArticleImage';
 import SonbolLabsAd from '@/components/SonbolLabsAd';
+import TikTokIcon from '@/components/TikTokIcon';
+import { socialAccounts } from '@/lib/social';
 
 interface HeaderProps {
   articles: Article[];
@@ -77,6 +79,26 @@ export default function Header({ articles }: HeaderProps) {
             >
               <MessageCircle className="h-3.5 w-3.5" />
               <span>واتساب</span>
+            </a>
+            <a
+              href={socialAccounts.instagram}
+              target="_blank"
+              rel="noreferrer"
+              className="text-ink-300 transition-colors hover:text-brand-400"
+              aria-label="إنستغرام Pioneera"
+              title="إنستغرام"
+            >
+              <Instagram className="h-3.5 w-3.5" />
+            </a>
+            <a
+              href={socialAccounts.tiktok}
+              target="_blank"
+              rel="noreferrer"
+              className="text-ink-300 transition-colors hover:text-brand-400"
+              aria-label="تيك توك Pioneera"
+              title="تيك توك"
+            >
+              <TikTokIcon className="h-3.5 w-3.5" />
             </a>
             <a
               href="tel:00201032907200"
