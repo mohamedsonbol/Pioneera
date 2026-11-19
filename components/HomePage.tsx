@@ -5,6 +5,7 @@ import Hero from '@/components/Hero';
 import CategorySection from '@/components/CategorySection';
 import VideoSection from '@/components/VideoSection';
 import Newsletter from '@/components/Newsletter';
+import SocialMediaSection from '@/components/SocialMediaSection';
 import Footer from '@/components/Footer';
 import BackToTop from '@/components/BackToTop';
 import { categories } from '@/lib/types';
@@ -97,6 +98,10 @@ export default function HomePage({ articles, featured }: HomePageProps) {
 
         <div id="section-video">
           <VideoSection articles={articlesByCategory.video ?? []} />
+        </div>
+
+        <div id="section-social">
+          <SocialMediaSection />
         </div>
 
         <Newsletter />
