@@ -1,28 +1,29 @@
 # Production Roadmap
 
-## Phase 2 — Sanity editorial platform
+## Current state
 
-Create a dedicated Sanity Studio and schemas for articles, authors, categories, tags, media, SEO, homepage configuration, redirects, and editorial workflow. Migrate legacy Supabase articles into Sanity, establish stable slugs, publish only through Sanity, and remove editorial writes from Supabase after review. Keep Supabase exclusively for identity and user-generated data.
+WordPress is the single source of truth for editorial content and member accounts. The Next.js application is read-only with respect to content; all sign-in and administration happens at `https://cms.pioneera.net/wp-admin`.
 
-### Phase 2A status — shadow mode
+## Phase 1 — WordPress editorial source (complete)
 
-The repository now contains an embedded `/studio` route, schemas, typed GROQ queries, preview/revalidation endpoints, and a dry-run-only Supabase importer. Supabase remains the live article source. Sanity requires a manually created project/dataset, CORS origins, editor accounts, image-asset mappings, preview/webhook secrets, and an approved migration dry run before any content is imported. A separate approval is required before setting any environment flag that makes the website read Sanity content.
+Public pages read from the WordPress REST API through `lib/editorial/`. Hot topics use the WordPress `hot-topics` category slug and sticky posts. Article slugs, media, authors, and categories come from WordPress.
 
-## Phase 3 — Membership and comments
+## Phase 2 — newsletter
 
-Create Supabase member profiles and subscription-status records. Keep free verified membership distinct from newsletter marketing consent. Implement server-authorized comment creation only when the member has a confirmed email and active status, the article is published, and its Sanity record is marked as a hot topic. Store authorship by user ID, support reports and moderation states, and expose moderation tools only through protected server endpoints and restrictive RLS.
+Define a WordPress-hosted newsletter signup flow, then re-enable the homepage newsletter section against that endpoint. The section is currently informational only.
+
+## Phase 3 — member experience
+
+Decide which member-only features (if any) the Next.js app should present, using WordPress as the identity provider. Current auth routes are static notices linking to WordPress.
 
 ## Phase 4 — SEO, media, and performance
 
-Generate Sanity-driven metadata, canonical URLs, structured data, XML sitemap, robots directives, RSS, redirects, Open Graph images, and Arabic social metadata. Move media into managed assets, define a strict `next/image` remote-host policy, optimize image sizing, and add cache revalidation on publication.
+Add canonical URLs, structured data, sitemap, robots directives, RSS, redirects, Open Graph metadata, and an explicit `next/image` remote-host policy. Add cache revalidation on publication.
 
 ## Phase 5 — security and operations
 
-Apply and test the Phase 1 RLS hardening migration, manage admin roles with trusted tooling, add rate limiting and abuse controls for auth/newsletter/comments, define CSP and security headers, audit dependencies regularly, and configure monitoring, backups, retention, and incident response.
+Keep dependency advisories remediated, add rate limiting and abuse controls at the WordPress edge, define CSP and security headers, and configure monitoring, backups, retention, and incident response.
 
 ## Phase 6 — testing and deployment
 
-Add unit tests for slugs and authorization predicates, integration tests for RLS and auth flows, route/component tests for RTL rendering, and end-to-end coverage for registration, verification, account, comments, moderation, search, and accessibility. Configure Vercel preview/production environments, required environment variables, Supabase redirect URLs, Sanity webhooks, and deployment checks before launch.
-## Development editorial source
-
-Development pages use `CONTENT_SOURCE=sanity` with the Sanity `development` dataset. There is no automatic Supabase editorial fallback. Supabase remains for auth, members, newsletter, and future comments. Studio remains blocked in production; fixture instructions are in `SANITY_DEVELOPMENT_FIXTURES.md`.
+Maintain route/component tests for RTL rendering and end-to-end coverage for search, categories, articles, and accessibility. Configure Vercel preview/production environments, required environment variables, and deployment checks. Production deployments are triggered by pushes to `main`.

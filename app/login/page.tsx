@@ -1,3 +1,3 @@
-import AuthForm from '@/components/AuthForm';
+import MembershipNotice from '@/components/MembershipNotice';
 export const metadata = { title: 'تسجيل الدخول' };
-export default function LoginPage() { return <AuthForm mode="login" />; }
+export default function LoginPage() { return <MembershipNotice title="تسجيل الدخول" />; }

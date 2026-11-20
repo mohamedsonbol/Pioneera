@@ -8,7 +8,6 @@ import { Search, Menu, X, Clock, UserRound, Phone, MessageCircle, Instagram } fr
 import { categories } from '@/lib/types';
 import type { Article } from '@/lib/types';
 import { getCategoryName } from '@/lib/types';
-import { useAuth } from '@/lib/auth';
 import ArticleImage from '@/components/ArticleImage';
 import SonbolLabsAd from '@/components/SonbolLabsAd';
 import TikTokIcon from '@/components/TikTokIcon';
@@ -20,7 +19,6 @@ interface HeaderProps {
 
 export default function Header({ articles }: HeaderProps) {
   const router = useRouter();
-  const { available } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -211,16 +209,14 @@ export default function Header({ articles }: HeaderProps) {
             >
               <Search className="h-5 w-5" />
             </button>
-            {available && (
-              <Link
-                href="/account"
-                className="rounded-full bg-ink-50 p-2.5 text-ink-600 transition-colors hover:bg-brand-50 hover:text-brand-600"
-                aria-label="الحساب"
-                title="الحساب"
-              >
-                <UserRound className="h-5 w-5" />
-              </Link>
-            )}
+            <Link
+              href="/account"
+              className="rounded-full bg-ink-50 p-2.5 text-ink-600 transition-colors hover:bg-brand-50 hover:text-brand-600"
+              aria-label="الحساب"
+              title="الحساب"
+            >
+              <UserRound className="h-5 w-5" />
+            </Link>
             </div>
           </div>
           <div className="mt-2 lg:hidden">

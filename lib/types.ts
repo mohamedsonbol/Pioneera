@@ -20,21 +20,6 @@ export interface Article {
   comments_enabled?: boolean;
 }
 
-export interface Comment {
-  id: string;
-  article_id: string;
-  name: string;
-  content: string;
-  is_approved: boolean;
-  created_at: string;
-}
-
-export interface NewsletterSubscriber {
-  id: string;
-  email: string;
-  subscribed_at: string;
-}
-
 export interface Category {
   id: string;
   name: string;

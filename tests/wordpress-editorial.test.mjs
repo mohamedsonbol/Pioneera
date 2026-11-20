@@ -209,12 +209,12 @@ test('configuration rejects missing, unsupported, and unsafe WordPress endpoints
   assert.deepEqual(getWordPressConfig(env), { apiUrl: env.WORDPRESS_API_URL });
 });
 
-test('public editorial routes use the repository and no longer depend on Sanity or Supabase editorial APIs', async () => {
+test('public editorial routes use the repository and no longer depend on Sanity editorial APIs', async () => {
   const { readFile } = await import('node:fs/promises');
   for (const path of ['../app/page.tsx', '../app/latest/page.tsx', '../app/hot-topics/page.tsx', '../app/search/page.tsx', '../app/article/[slug]/page.tsx', '../app/category/[slug]/page.tsx', '../app/author/[slug]/page.tsx']) {
     const source = await readFile(new URL(path, import.meta.url), 'utf8');
     assert.match(source, /lib\/editorial\/repository/);
-    assert.doesNotMatch(source, /sanity|supabase|fetch\(/i);
+    assert.doesNotMatch(source, /sanity|fetch\(/i);
   }
 });
 

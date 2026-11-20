@@ -1,3 +1,3 @@
-import AuthForm from '@/components/AuthForm';
+import MembershipNotice from '@/components/MembershipNotice';
 export const metadata = { title: 'إنشاء حساب' };
-export default function RegisterPage() { return <AuthForm mode="register" />; }
+export default function RegisterPage() { return <MembershipNotice title="إنشاء حساب" />; }

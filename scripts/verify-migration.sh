@@ -20,8 +20,6 @@ for file in "${required[@]}"; do
   test -f "$file"
 done
 
-test -f supabase/migrations/20260829120434_create_pioneera_schema.sql
-test -f supabase/migrations/20260904000000_harden_legacy_access.sql
 test -f .env.example
 
-echo "Phase 1 route, migration, and environment checks passed. No files were modified."
+echo "Phase 1 route and environment checks passed. No files were modified."
